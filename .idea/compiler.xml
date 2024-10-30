@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="shared-lib" />
+        <module name="data-ingestion-service (4)" />
+        <module name="analysis-service" />
+      </profile>
+      <profile name="Annotation profile for trading-bot" enabled="true">
+        <sourceOutputDir name="../monitoring-service/target/generated-sources/annotations" />
+        <sourceTestOutputDir name="../monitoring-service/target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="data-ingestion-service (1)" />
+      </profile>
+    </annotationProcessing>
+  </component>
+</project>

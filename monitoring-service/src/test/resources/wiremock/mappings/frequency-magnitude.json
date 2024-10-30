@@ -1,0 +1,19 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/api/analysis/fourier/frequency-magnitude",
+    "bodyPatterns": [
+      {
+        "matchesJsonPath": "$.values",
+        "matchesJsonPath": "$.timestamps"
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "bodyFileName": "frequency-magnitude-response.json"
+  }
+}

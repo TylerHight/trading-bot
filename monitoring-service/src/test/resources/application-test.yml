@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: monitoring-service
+  cloud:
+    discovery:
+      enabled: false    # Disable service discovery for tests
+    service-registry:
+      auto-registration:
+        enabled: false  # Disable auto-registration for tests
+
+server:
+  port: 0  # Random port for tests
+
+eureka:
+  client:
+    enabled: false     # Disable Eureka client for tests
+    register-with-eureka: false
+    fetch-registry: false
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 2000
+        readTimeout: 2000
+      analysis-service:
+        connectTimeout: 5000
+        readTimeout: 5000
+
+wiremock:
+  server:
+    port: ${wiremock.port:0}
+    files: classpath:/wiremock/mappings
+
+logging:
+  level:
+    root: INFO
+    com.example.monitoring: DEBUG
+    org.springframework.cloud.contract: DEBUG
+    com.example.monitoring.client.AnalysisServiceClient: DEBUG
