@@ -1,11 +1,11 @@
 package com.example.analysis.service;
 
 import com.example.analysis.model.TimeSeriesData;
-import com.example.analysis.service.FourierTransformer;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.complex.Complex;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,38 +14,51 @@ import java.util.stream.Collectors;
 /**
  * Stores data on and performs analyses on a particular set of timeseries data.
  */
+@Slf4j
 @Service
 public class TimeSeriesAnalysis {
-    private static final Logger logger = LoggerFactory.getLogger(TimeSeriesAnalysis.class);
-
-    private List<Double> values;
-    private List<Long> timestamps;
+    private final List<Double> values;
+    private final List<Long> timestamps;
     private final FourierTransformer fourierTransformer;
     private Double lastSMA;
     private Double lastEMA;
-    private int smaPeriod;
-    private int emaPeriod;
+    private final int smaPeriod;
+    private final int emaPeriod;
     private double smaSum;
 
-    public TimeSeriesAnalysis(int smaPeriod, int emaPeriod) {
-        this(smaPeriod, emaPeriod, new ArrayList<>(), new ArrayList<>());
+    @Autowired
+    public TimeSeriesAnalysis(
+            @Value("${timeseries.sma.period:10}") int smaPeriod,
+            @Value("${timeseries.ema.period:20}") int emaPeriod
+    ) {
+        this.smaPeriod = smaPeriod;
+        this.emaPeriod = emaPeriod;
+        this.values = new ArrayList<>();
+        this.timestamps = new ArrayList<>();
+        this.fourierTransformer = new FourierTransformer();
+        this.lastSMA = null;
+        this.lastEMA = null;
+        this.smaSum = 0.0;
+        log.info("Initialized TimeSeriesAnalysis with SMA period: {} and EMA period: {}",
+                smaPeriod, emaPeriod);
     }
 
-    public TimeSeriesAnalysis(int smaPeriod, int emaPeriod, List<Double> initialValues, List<Long> initialTimestamps) {
+    // Constructor for testing and manual creation
+    protected TimeSeriesAnalysis(int smaPeriod, int emaPeriod, List<Double> initialValues, List<Long> initialTimestamps) {
         if (initialValues.size() != initialTimestamps.size()) {
             throw new IllegalArgumentException("Values and timestamps must have the same size");
         }
+        this.smaPeriod = smaPeriod;
+        this.emaPeriod = emaPeriod;
         this.values = new ArrayList<>(initialValues);
         this.timestamps = new ArrayList<>(initialTimestamps);
         this.fourierTransformer = new FourierTransformer();
-        this.smaPeriod = smaPeriod;
-        this.emaPeriod = emaPeriod;
         this.lastSMA = null;
         this.lastEMA = null;
         this.smaSum = 0.0;
 
         initializeIndicators();
-        logger.info("Initialized TimeSeriesAnalysis with SMA period: {} and EMA period: {}",
+        log.info("Initialized TimeSeriesAnalysis with SMA period: {} and EMA period: {}",
                 smaPeriod, emaPeriod);
     }
 
@@ -70,7 +83,7 @@ public class TimeSeriesAnalysis {
             lastEMA = sum / emaPeriod;
         }
 
-        logger.debug("Indicators initialized. Initial SMA: {}, Initial EMA: {}", lastSMA, lastEMA);
+        log.debug("Indicators initialized. Initial SMA: {}, Initial EMA: {}", lastSMA, lastEMA);
     }
 
     public void addPrice(double price, long timestamp) {
@@ -78,7 +91,7 @@ public class TimeSeriesAnalysis {
         timestamps.add(timestamp);
         updateSMA(price);
         updateEMA(price);
-        logger.debug("Added new price: {} at timestamp: {}. Updated SMA: {}, EMA: {}",
+        log.debug("Added new price: {} at timestamp: {}. Updated SMA: {}, EMA: {}",
                 price, timestamp, lastSMA, lastEMA);
     }
 

@@ -1,9 +1,21 @@
 spring:
   application:
     name: analysis-service
+  cloud:
+    discovery:
+      enabled: true
+    loadbalancer:
+      ribbon:
+        enabled: false  # Disable legacy Ribbon load balancer in favor of Spring Cloud LoadBalancer
 
 server:
   port: 8082
+  servlet:
+    context-path: /api/v1  # Optional: adds base path to all endpoints
+  tomcat:
+    max-threads: 200
+    accept-count: 100
+    connection-timeout: 5000
 
 eureka:
   client:
@@ -11,5 +23,36 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
     fetch-registry: true
     register-with-eureka: true
+    registry-fetch-interval-seconds: 5  # How often to fetch the registry from Eureka
   instance:
     prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 10  # How often to send heartbeat to Eureka
+    lease-expiration-duration-in-seconds: 30  # How long before Eureka removes the instance
+    instance-id: ${spring.cloud.client.hostname}:${spring.application.name}:${server.port}
+
+# Actuator endpoints for monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  health:
+    diskspace:
+      enabled: true
+
+# Logging configuration
+logging:
+  level:
+    com.example.analysis: DEBUG
+    org.springframework: INFO
+    org.springframework.cloud: INFO
+
+# Application specific properties
+timeseries:
+  sma:
+    period: 10
+  ema:
+    period: 20

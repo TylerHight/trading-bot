@@ -56,6 +56,15 @@
         </processorPath>
         <module name="data-ingestion-service (4)" />
       </profile>
+      <profile name="Annotation profile for data-ingestion-service (5)" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
+        </processorPath>
+        <module name="data-ingestion-service (5)" />
+      </profile>
       <profile name="Annotation profile for trading-bot" enabled="true">
         <sourceOutputDir name="../backtesting-service/target/generated-sources/annotations" />
         <sourceTestOutputDir name="../backtesting-service/target/generated-test-sources/test-annotations" />
@@ -67,15 +76,6 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
         </processorPath>
         <module name="data-ingestion-service (2)" />
-      </profile>
-      <profile name="Annotation profile for data-ingestion-service (5)" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
-        </processorPath>
-        <module name="data-ingestion-service (5)" />
       </profile>
     </annotationProcessing>
   </component>
