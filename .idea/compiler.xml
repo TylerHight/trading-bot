@@ -6,16 +6,27 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="shared-lib" />
-        <module name="data-ingestion-service (4)" />
         <module name="analysis-service" />
-      </profile>
-      <profile name="Annotation profile for trading-bot" enabled="true">
-        <sourceOutputDir name="../monitoring-service/target/generated-sources/annotations" />
-        <sourceTestOutputDir name="../monitoring-service/target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
+        <module name="data-ingestion-service (3)" />
+        <module name="data-ingestion-service (4)" />
+        <module name="data-ingestion-service (5)" />
+        <module name="data-ingestion-service (6)" />
+        <module name="monitoring-service" />
+        <module name="shared-lib" />
         <module name="data-ingestion-service (1)" />
       </profile>
+      <profile name="Annotation profile for trading-bot" enabled="true">
+        <sourceOutputDir name="../backtesting-service/target/generated-sources/annotations" />
+        <sourceTestOutputDir name="../backtesting-service/target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="data-ingestion-service (2)" />
+      </profile>
     </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="data-ingestion-service (4)" options="" />
+      <module name="monitoring-service" options="-parameters" />
+    </option>
   </component>
 </project>

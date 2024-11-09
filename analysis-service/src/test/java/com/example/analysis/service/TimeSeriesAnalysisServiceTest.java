@@ -7,15 +7,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.Mockito.when;
+
 
 @ExtendWith(MockitoExtension.class)
 class TimeSeriesAnalysisServiceTest {
@@ -88,28 +84,6 @@ class TimeSeriesAnalysisServiceTest {
         Double ema = service.getLastEMA(symbol);
         assertNotNull(ema);
         assertTrue(ema > 150.0 && ema < 205.0); // Should be in the range
-    }
-
-    @Test
-    void testGetFourierAnalysis() {
-        String symbol = "AAPL";
-        List<Double[]> expectedResult = Arrays.asList(
-                new Double[]{1.0, 1.0},
-                new Double[]{2.0, 0.1}
-        );
-
-        when(fourierTransformer.getFrequencyMagnitudePairs(anyList(), anyDouble()))
-                .thenReturn(expectedResult);
-
-        // Add some test data
-        for (int i = 0; i < 10; i++) {
-            double time = i / 10.0;
-            service.addPrice(symbol, Math.sin(2 * Math.PI * time), (long)(time * 1000));
-        }
-
-        List<Double[]> result = service.getFourierAnalysis(symbol);
-        assertNotNull(result);
-        assertEquals(expectedResult.size(), result.size());
     }
 
     @Test

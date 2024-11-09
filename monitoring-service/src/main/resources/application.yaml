@@ -2,46 +2,25 @@ spring:
   application:
     name: monitoring-service
   cloud:
-    discovery:
-      enabled: true
+    openfeign:
+      client:
+        config:
+          analysis-service:
+            connectTimeout: 5000
+            readTimeout: 5000
+            loggerLevel: full
 
 server:
-  port: 8083  # Unique port for monitoring service
+  port: 8083
 
 eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
-    register-with-eureka: true
-    fetch-registry: true
   instance:
     preferIpAddress: true
-    lease-renewal-interval-in-seconds: 10
-    lease-expiration-duration-in-seconds: 30
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics
-  endpoint:
-    health:
-      show-details: always
-
-feign:
-  client:
-    config:
-      default:
-        connectTimeout: 5000
-        readTimeout: 5000
-        loggerLevel: full
-      analysis-service:  # Specific configuration for analysis service
-        connectTimeout: 10000
-        readTimeout: 10000
 
 logging:
   level:
-    root: INFO
     com.example.monitoring: DEBUG
-    org.springframework.cloud.netflix.eureka: INFO
-    org.springframework.cloud.openfeign: DEBUG
+    org.springframework.web: INFO
