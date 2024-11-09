@@ -78,6 +78,33 @@ trading-bot/                      # Root project directory
 │   ├── pom.xml
 │   └── README.md
 │
+├── monitoring-service/          # Monitoring service
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/
+│   │   │   │   └── com/
+│   │   │   │       └── example/
+│   │   │   │           └── monitoring/
+│   │   │   │               ├── MonitoringApplication.java
+│   │   │   │               ├── controller/
+│   │   │   │               ├── service/
+│   │   │   │               ├── repository/
+│   │   │   │               └── model/
+│   │   │   └── resources/
+│   │   │       └── application.yml
+│   │   └── test/
+│   ├── monitoring-frontend/    # React frontend
+│   │   ├── src/
+│   │   │   ├── components/
+│   │   │   ├── App.jsx
+│   │   │   └── main.jsx
+│   │   ├── public/
+│   │   ├── package.json
+│   │   └── vite.config.js
+│   ├── docs/
+│   ├── pom.xml
+│   └── README.md
+│
 ├── deployment/                 # Deployment configuration
 │   ├── docker/
 │   │   ├── Dockerfile.service-name

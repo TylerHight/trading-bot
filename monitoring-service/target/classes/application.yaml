@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: monitoring-service
+  cloud:
+    openfeign:
+      client:
+        config:
+          analysis-service:
+            connectTimeout: 5000
+            readTimeout: 5000
+            loggerLevel: full
+
+server:
+  port: 8083
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    preferIpAddress: true
+
+logging:
+  level:
+    com.example.monitoring: DEBUG
+    org.springframework.web: INFO
