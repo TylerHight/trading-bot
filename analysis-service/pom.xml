@@ -10,6 +10,10 @@
 
     <artifactId>analysis-service</artifactId>
 
+    <properties>
+        <lombok.version>1.18.30</lombok.version>
+    </properties>
+
     <dependencies>
         <!-- Project Dependencies -->
         <dependency>
@@ -31,17 +35,30 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+        <!-- For service-to-service communication -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <optional>true</optional>
+        </dependency>
 
         <!-- Analysis Tools -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
-            <version>3.6.1</version>  <!-- Added explicit version -->
+            <version>3.6.1</version>
         </dependency>
         <dependency>
             <groupId>org.jfree</groupId>
             <artifactId>jfreechart</artifactId>
-            <version>1.5.3</version>  <!-- Added explicit version -->
+            <version>1.5.3</version>
         </dependency>
 
         <!-- Logging -->
@@ -64,13 +81,13 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.3.1</version>  <!-- Added for mocking in tests -->
+            <version>5.3.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>5.3.1</version>  <!-- Added for Mockito-JUnit integration -->
+            <version>5.3.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -85,11 +102,19 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0</version>  <!-- Added for better test execution -->
+                <version>3.0.0</version>
             </plugin>
         </plugins>
     </build>

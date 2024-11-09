@@ -19,9 +19,17 @@
         <java.version>17</java.version>
         <spring-cloud.version>2023.0.0</spring-cloud.version>
         <jfreechart.version>1.5.3</jfreechart.version>
+        <lombok.version>1.18.30</lombok.version>
     </properties>
 
     <dependencies>
+        <!-- Project Dependencies -->
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>shared-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Spring Boot Starters -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -40,6 +48,14 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <optional>true</optional>
         </dependency>
 
         <!-- Visualization -->
@@ -82,6 +98,12 @@
                 <configuration>
                     <mainClass>com.example.monitoring.MonitoringApplication</mainClass>
                     <layout>JAR</layout>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
                 </configuration>
                 <executions>
                     <execution>

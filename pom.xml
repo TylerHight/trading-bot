@@ -35,6 +35,8 @@
     <json.version>20231013</json.version>
     <commons-math3.version>3.6.1</commons-math3.version>
     <jfreechart.version>1.5.3</jfreechart.version>
+    <lombok.version>1.18.30</lombok.version>
+    <jackson.version>2.15.3</jackson.version>
 
     <!-- Test Dependency Versions -->
     <junit-jupiter.version>5.10.0</junit-jupiter.version>
@@ -69,6 +71,12 @@
 
       <!-- Third-party Dependencies -->
       <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${lombok.version}</version>
+        <optional>true</optional>
+      </dependency>
+      <dependency>
         <groupId>com.squareup.okhttp3</groupId>
         <artifactId>okhttp</artifactId>
         <version>${okhttp.version}</version>
@@ -87,6 +95,18 @@
         <groupId>org.jfree</groupId>
         <artifactId>jfreechart</artifactId>
         <version>${jfreechart.version}</version>
+      </dependency>
+
+      <!-- Jackson Dependencies -->
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>${jackson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-annotations</artifactId>
+        <version>${jackson.version}</version>
       </dependency>
 
       <!-- Test Dependencies -->
@@ -137,11 +157,17 @@
 
   <!-- Dependencies that will be shared across all modules -->
   <dependencies>
+    <!-- Lombok -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <optional>true</optional>
+    </dependency>
+
     <!-- Spring Boot Test -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
-      <version>${spring-boot.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -170,6 +196,14 @@
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-maven-plugin</artifactId>
           <version>${spring-boot.version}</version>
+          <configuration>
+            <excludes>
+              <exclude>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+              </exclude>
+            </excludes>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -178,6 +212,13 @@
           <configuration>
             <source>${java.version}</source>
             <target>${java.version}</target>
+            <annotationProcessorPaths>
+              <path>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+              </path>
+            </annotationProcessorPaths>
           </configuration>
         </plugin>
         <plugin>

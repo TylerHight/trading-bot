@@ -1,13 +1,127 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React</title>
+    <title>Trading Bot Monitor</title>
+    
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    
+    <!-- Custom styles for charts -->
+    <style>
+      /* Chart container styles */
+      .recharts-wrapper {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      }
+      
+      /* Tooltip styles */
+      .recharts-tooltip-wrapper {
+        background: rgba(255, 255, 255, 0.96);
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+      }
+      
+      /* Chart axis labels */
+      .recharts-cartesian-axis-label {
+        fill: #4B5563;
+        font-size: 12px;
+      }
+      
+      /* Legend styles */
+      .recharts-legend-item-text {
+        color: #374151;
+      }
+      
+      /* Grid lines */
+      .recharts-cartesian-grid-horizontal line,
+      .recharts-cartesian-grid-vertical line {
+        stroke: #E5E7EB;
+      }
+      
+      /* Chart title styles */
+      .chart-title {
+        color: #111827;
+        font-weight: 600;
+        margin-bottom: 1rem;
+      }
+      
+      /* Loading state styles */
+      .loading-state {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 300px;
+        background: #F9FAFB;
+        border-radius: 8px;
+      }
+      
+      /* Responsive container */
+      .chart-container {
+        width: 100%;
+        height: 400px;
+        margin: 1rem 0;
+      }
+      
+      /* Dark mode support */
+      @media (prefers-color-scheme: dark) {
+        body {
+          background-color: #1F2937;
+          color: #F9FAFB;
+        }
+        
+        .chart-title {
+          color: #F9FAFB;
+        }
+        
+        .recharts-tooltip-wrapper {
+          background: rgba(31, 41, 55, 0.96);
+          color: #F9FAFB;
+        }
+        
+        .recharts-cartesian-axis-label {
+          fill: #9CA3AF;
+        }
+        
+        .recharts-legend-item-text {
+          color: #D1D5DB;
+        }
+        
+        .recharts-cartesian-grid-horizontal line,
+        .recharts-cartesian-grid-vertical line {
+          stroke: #374151;
+        }
+        
+        .loading-state {
+          background: #374151;
+          color: #F9FAFB;
+        }
+      }
+    </style>
   </head>
-  <body>
+  <body class="bg-gray-50 dark:bg-gray-900">
     <div id="root"></div>
+    
+    <!-- App entry point -->
     <script type="module" src="/src/main.jsx"></script>
+    
+    <!-- Error boundary for React -->
+    <script>
+      window.addEventListener('error', function(event) {
+        console.error('Global error caught:', event.error);
+      });
+      
+      // Handle React errors
+      window.addEventListener('unhandledrejection', function(event) {
+        console.error('Unhandled promise rejection:', event.reason);
+      });
+    </script>
+    
+    <!-- Development mode warning -->
+    <script>
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Running in development mode');
+      }
+    </script>
   </body>
 </html>
