@@ -18,10 +18,7 @@ trading-bot/                      # Root project directory
 │   │   ├── data-ingestion.md
 │   │   ├── analysis.md
 │   │   └── monitoring.md
-│   ├── setup/                 # Setup and deployment guides
-│   │   ├── installation.md
-│   │   └── configuration.md
-│   └── README.md
+│   └── setup/                 # Setup and deployment guides
 │
 ├── shared-lib/                  # Shared library module
 │   ├── src/
@@ -30,34 +27,13 @@ trading-bot/                      # Root project directory
 │   │   │       └── com/
 │   │   │           └── example/
 │   │   │               └── shared/
-│   │   │                   ├── model/
-│   │   │                   └── util/
+│   │   │                   ├── dto/           # Data Transfer Objects
+│   │   │                   ├── model/         # Common domain models
+│   │   │                   └── util/          # Shared utilities
 │   │   └── test/
-│   ├── pom.xml
-│   └── README.md
+│   └── pom.xml
 │
-├── data-ingestion-service/      # Data ingestion service
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/
-│   │   │   │   └── com/
-│   │   │   │       └── example/
-│   │   │   │           └── dataingestion/
-│   │   │   │               ├── DataIngestionApplication.java
-│   │   │   │               ├── controller/
-│   │   │   │               ├── service/
-│   │   │   │               ├── repository/
-│   │   │   │               └── model/
-│   │   │   └── resources/
-│   │   │       └── application.yml
-│   │   └── test/
-│   ├── docs/                   # Service-specific documentation
-│   │   ├── api.md
-│   │   └── configuration.md
-│   ├── pom.xml
-│   └── README.md
-│
-├── analysis-service/            # Analysis service
+├── analysis-service/            # Technical Analysis Service
 │   ├── src/
 │   │   ├── main/
 │   │   │   ├── java/
@@ -65,20 +41,18 @@ trading-bot/                      # Root project directory
 │   │   │   │       └── example/
 │   │   │   │           └── analysis/
 │   │   │   │               ├── AnalysisApplication.java
-│   │   │   │               ├── controller/
-│   │   │   │               ├── service/
-│   │   │   │               ├── repository/
-│   │   │   │               └── model/
+│   │   │   │               ├── controller/    # REST endpoints
+│   │   │   │               │   └── FourierAnalysisController.java
+│   │   │   │               ├── service/       # Business logic
+│   │   │   │               │   ├── TimeSeriesAnalysis.java
+│   │   │   │               │   └── FourierTransformer.java
+│   │   │   │               └── model/         # Domain models
 │   │   │   └── resources/
 │   │   │       └── application.yml
 │   │   └── test/
-│   ├── docs/                   # Service-specific documentation
-│   │   ├── api.md
-│   │   └── fourier-analysis.md
-│   ├── pom.xml
-│   └── README.md
+│   └── pom.xml
 │
-├── monitoring-service/          # Monitoring service
+├── monitoring-service/          # Visualization Service
 │   ├── src/
 │   │   ├── main/
 │   │   │   ├── java/
@@ -86,110 +60,163 @@ trading-bot/                      # Root project directory
 │   │   │   │       └── example/
 │   │   │   │           └── monitoring/
 │   │   │   │               ├── MonitoringApplication.java
-│   │   │   │               ├── controller/
-│   │   │   │               ├── service/
-│   │   │   │               ├── repository/
-│   │   │   │               └── model/
+│   │   │   │               ├── controller/    # REST endpoints
+│   │   │   │               ├── service/       # Business logic
+│   │   │   │               └── client/        # Feign clients
 │   │   │   └── resources/
 │   │   │       └── application.yml
 │   │   └── test/
 │   ├── monitoring-frontend/    # React frontend
 │   │   ├── src/
 │   │   │   ├── components/
+│   │   │   │   └── FourierTransformPlot.jsx
 │   │   │   ├── App.jsx
 │   │   │   └── main.jsx
-│   │   ├── public/
 │   │   ├── package.json
 │   │   └── vite.config.js
-│   ├── docs/
-│   ├── pom.xml
-│   └── README.md
+│   └── pom.xml
 │
-├── deployment/                 # Deployment configuration
-│   ├── docker/
-│   │   ├── Dockerfile.service-name
-│   │   └── docker-compose.yml
-│   └── kubernetes/
-│       ├── service-deployments/
-│       └── config-maps/
+├── strategy-service/           # Trading Strategy Service
+│   ├── src/
+│   │   └── main/
+│   │       ├── java/
+│   │       │   └── com/
+│   │       │       └── example/
+│   │       │           └── strategy/
+│   │       │               └── StrategyApplication.java
+│   │       └── resources/
+│   │           └── application.yml
+│   └── pom.xml
 │
-├── config/                     # Common configuration
-│   ├── application.yml
-│   └── logback.xml
+├── execution-service/          # Order Execution Service
+│   ├── src/
+│   │   └── main/
+│   │       ├── java/
+│   │       │   └── com/
+│   │       │       └── example/
+│   │       │           └── execution/
+│   │       │               └── ExecutionApplication.java
+│   │       └── resources/
+│   │           └── application.yml
+│   └── pom.xml
 │
-├── scripts/                    # Build and utility scripts
-│   ├── build-all.sh
-│   └── deploy.sh
+├── risk-service/              # Risk Management Service
+│   ├── src/
+│   │   └── main/
+│   │       ├── java/
+│   │       │   └── com/
+│   │       │       └── example/
+│   │       │           └── risk/
+│   │       │               └── RiskApplication.java
+│   │       └── resources/
+│   │           └── application.yml
+│   └── pom.xml
+│
+├── data-ingestion-service/    # Market Data Ingestion Service
+│   ├── src/
+│   │   └── main/
+│   │       ├── java/
+│   │       │   └── com/
+│   │       │       └── example/
+│   │       │           └── dataingestion/
+│   │       │               └── DataIngestionApplication.java
+│   │       └── resources/
+│   │           └── application.yml
+│   └── pom.xml
+│
+├── backtesting-service/       # Backtesting Service
+│   ├── src/
+│   │   └── main/
+│   │       ├── java/
+│   │       │   └── com/
+│   │       │       └── example/
+│   │       │           └── backtesting/
+│   │       │               └── BacktestingApplication.java
+│   │       └── resources/
+│   │           └── application.yml
+│   └── pom.xml
 │
 ├── .gitignore
-├── pom.xml                     # Parent POM
-└── README.md
+└── pom.xml                    # Parent POM
 ```
 
-## Directory Descriptions
+## Key Configuration Files
 
-### Root Level
-- `docs/` - Project documentation
-- `shared-lib/` - Common code shared across services
-- `*-service/` - Individual microservices
-- `deployment/` - Deployment configurations
-- `config/` - Common configuration files
-- `scripts/` - Build and deployment scripts
+### Parent pom.xml
+- Defines common dependencies
+- Manages versions
+- Configures shared plugins
+- Lists all modules
 
-### Service Structure
-Each service follows a standard Maven project structure:
-```
-service-name/
-├── src/
-│   ├── main/
-│   │   ├── java/        # Service source code
-│   │   └── resources/   # Service configuration
-│   └── test/            # Test files
-├── docs/                # Service documentation
-├── pom.xml             # Service build file
-└── README.md           # Service overview
-```
+### Application Configuration (application.yml)
+Each service should have:
+```yaml
+server:
+  port: [unique-port]
 
-### Documentation Structure
-```
-docs/
-├── architecture/       # System architecture docs
-├── api/               # API documentation
-├── setup/             # Setup guides
-└── README.md          # Documentation overview
+spring:
+  application:
+    name: [service-name]
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
 ```
 
-## Package Naming Convention
-- Base package: `com.example`
-- Service packages: `com.example.[service-name]`
-- Shared code: `com.example.shared`
+## Service Ports
+- Eureka Server: 8761
+- Analysis Service: 8082
+- Monitoring Service: 8083
+- Frontend: 3000
+- Other services: Assign unique ports as needed
 
-## Build Structure
-- Parent POM at root level
-- Individual service POMs inherit from parent
-- Shared library as a dependency
+## Package Structure
+Each service follows:
+```
+com.example.[service-name]/
+├── controller/     # REST endpoints
+├── service/        # Business logic
+├── model/          # Domain models
+├── config/         # Configuration classes
+└── client/         # Service clients (if needed)
+```
 
-## Key Files
-- `pom.xml` - Maven build configuration
-- `application.yml` - Application configuration
-- `Dockerfile` - Container build instructions
-- `docker-compose.yml` - Local deployment setup
+## Shared Library Structure
+```
+com.example.shared/
+├── dto/            # Data Transfer Objects
+├── model/          # Common domain models
+└── util/           # Shared utilities
+```
 
-## Adding New Services
-1. Create new directory under root
-2. Follow standard service structure
-3. Add to parent POM modules
-4. Create service documentation
-5. Update deployment configurations
+## Running the Services
+
+### IntelliJ IDEA Community Edition
+1. Create "Application" run configurations for each service
+2. Set main class to [ServiceName]Application
+3. Run in order: Analysis -> Monitoring
+4. Use VSCode for frontend development
+
+### Frontend Development (VSCode)
+```bash
+cd monitoring-service/monitoring-frontend
+npm install
+npm run dev
+```
 
 ## Best Practices
-1. Maintain package structure consistency
-2. Keep service-specific docs with service
-3. Use shared library for common code
-4. Follow naming conventions
-5. Update documentation when adding features
+1. Keep service-specific code in respective services
+2. Use shared-lib for common code
+3. Maintain consistent package structure
+4. Document APIs and configurations
+5. Follow microservice principles
+    - Single responsibility
+    - Independent deployability
+    - Loose coupling
 
-## Related Documentation
-- [Architecture Overview](./overview.md)
-- [Service Documentation](./services.md)
-- [Setup Guide](../setup/installation.md)
+## Current Focus
+- Fourier Transform implementation
+- Service communication
+- Frontend visualization
+- Data flow between services
