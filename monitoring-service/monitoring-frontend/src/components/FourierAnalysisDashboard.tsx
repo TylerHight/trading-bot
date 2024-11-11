@@ -89,12 +89,25 @@ const FourierAnalysisDashboard = () => {
     URL.revokeObjectURL(url);
   };
 
+  const chartCommonProps = {
+    margin: { top: 20, right: 30, left: 50, bottom: 65 }, // Increased margins
+    className: "mt-4" // Added top margin
+  };
+
+  const axisCommonProps = {
+    tick: { 
+      fill: 'rgba(255,255,255,0.87)',
+      fontSize: 12 // Slightly smaller font
+    },
+    tickMargin: 10
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground p-4">
       <div className="w-full max-w-7xl mx-auto space-y-6">
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <h1 className="text-2xl font-bold text-foreground">Fourier Analysis Dashboard</h1>
-          <div className="space-x-4">
+          <div className="flex flex-wrap gap-2">
             <Button 
               onClick={refreshData} 
               disabled={loading}
@@ -130,24 +143,31 @@ const FourierAnalysisDashboard = () => {
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart
                     data={timeSeriesData}
-                    margin={{ top: 5, right: 30, left: 20, bottom: 25 }}
+                    {...chartCommonProps}
                   >
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
                     <XAxis 
                       dataKey="timestamp" 
-                      label={{ value: 'Time', position: 'bottom', fill: 'rgba(255,255,255,0.87)' }}
+                      height={60} // Increased height
                       angle={-45}
                       textAnchor="end"
-                      tick={{ fill: 'rgba(255,255,255,0.87)' }}
+                      {...axisCommonProps}
+                      label={{ 
+                        value: 'Time', 
+                        position: 'insideBottom', 
+                        offset: -10,
+                        fill: 'rgba(255,255,255,0.87)' 
+                      }}
                     />
                     <YAxis 
+                      {...axisCommonProps}
                       label={{ 
                         value: 'Value', 
                         angle: -90, 
                         position: 'insideLeft',
+                        offset: -5,
                         fill: 'rgba(255,255,255,0.87)' 
                       }}
-                      tick={{ fill: 'rgba(255,255,255,0.87)' }}
                     />
                     <Tooltip 
                       contentStyle={{ 
@@ -156,7 +176,14 @@ const FourierAnalysisDashboard = () => {
                       }}
                       labelStyle={{ color: 'rgba(255,255,255,0.87)' }}
                     />
-                    <Legend wrapperStyle={{ color: 'rgba(255,255,255,0.87)' }} />
+                    <Legend 
+                      verticalAlign="top"
+                      height={36}
+                      wrapperStyle={{ 
+                        color: 'rgba(255,255,255,0.87)',
+                        paddingTop: '10px'
+                      }}
+                    />
                     <Line 
                       type="monotone" 
                       dataKey="value" 
@@ -179,26 +206,29 @@ const FourierAnalysisDashboard = () => {
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart
                     data={frequencyData}
-                    margin={{ top: 5, right: 30, left: 20, bottom: 25 }}
+                    {...chartCommonProps}
                   >
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
                     <XAxis 
                       dataKey="frequency" 
+                      height={60} // Increased height
+                      {...axisCommonProps}
                       label={{ 
                         value: 'Frequency (Hz)', 
-                        position: 'bottom',
+                        position: 'insideBottom',
+                        offset: -10,
                         fill: 'rgba(255,255,255,0.87)' 
                       }}
-                      tick={{ fill: 'rgba(255,255,255,0.87)' }}
                     />
                     <YAxis 
+                      {...axisCommonProps}
                       label={{ 
                         value: 'Magnitude', 
                         angle: -90, 
                         position: 'insideLeft',
+                        offset: -5,
                         fill: 'rgba(255,255,255,0.87)' 
                       }}
-                      tick={{ fill: 'rgba(255,255,255,0.87)' }}
                     />
                     <Tooltip 
                       contentStyle={{ 
@@ -207,7 +237,14 @@ const FourierAnalysisDashboard = () => {
                       }}
                       labelStyle={{ color: 'rgba(255,255,255,0.87)' }}
                     />
-                    <Legend wrapperStyle={{ color: 'rgba(255,255,255,0.87)' }} />
+                    <Legend 
+                      verticalAlign="top"
+                      height={36}
+                      wrapperStyle={{ 
+                        color: 'rgba(255,255,255,0.87)',
+                        paddingTop: '10px'
+                      }}
+                    />
                     <Line 
                       type="monotone" 
                       dataKey="magnitude" 
