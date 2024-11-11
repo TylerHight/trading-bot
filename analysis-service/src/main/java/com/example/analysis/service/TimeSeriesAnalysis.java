@@ -197,4 +197,27 @@ public class TimeSeriesAnalysis {
 
         return new TimeSeriesData(filtered.get(0), filteredTimestamps);
     }
+
+    public void generateSampleData() {
+        // Clear existing data
+        values.clear();
+        timestamps.clear();
+
+        // Generate 100 data points of a composite signal
+        double frequency1 = 0.1;  // Hz
+        double frequency2 = 0.5;  // Hz
+        double samplingRate = 10; // Hz
+        int numPoints = 100;
+
+        for (int i = 0; i < numPoints; i++) {
+            double time = i / samplingRate;
+            // Create a signal with two frequency components and some noise
+            double value = Math.sin(2 * Math.PI * frequency1 * time)  // First component
+                    + 0.5 * Math.sin(2 * Math.PI * frequency2 * time)  // Second component
+                    + 0.2 * Math.random();  // Random noise
+
+            long timestamp = System.currentTimeMillis() - (numPoints - i) * 1000; // timestamps in past
+            addPrice(value, timestamp);
+        }
+    }
 }

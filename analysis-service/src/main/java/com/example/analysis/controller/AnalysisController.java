@@ -45,4 +45,10 @@ public class AnalysisController {
 
         return result;
     }
+
+    @GetMapping("/sample")
+    public ResponseEntity<String> generateSample() {
+        timeSeriesAnalysis.generateSampleData();
+        return ResponseEntity.ok("Sample data generated");
+    }
 }
