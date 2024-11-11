@@ -1,222 +1,279 @@
-# docs/architecture/project-structure.md
-
-# Project Structure
+# Trading Bot Project Documentation
 
 ## Overview
-This document details the organization and structure of the Trading Bot project. The project follows a microservices architecture with clear separation of concerns and modular design.
+A microservices-based trading bot focusing on technical analysis using Fourier transforms. The system processes market data, performs advanced technical analysis, and provides real-time visualization through a React frontend.
 
-## Directory Structure
+## Current Implementation Status
+
+### Completed Components
+- Basic project structure and module setup
+- Maven configuration
+- TimeSeriesAnalysis implementation
+- FourierTransformer service
+- Core service communication framework
+
+### In Progress
+- Service-to-service communication
+- Frontend visualization
+- Real-time data updates
+- Fourier transform visualization
+
+### Pending
+- Strategy implementation
+- Order execution
+- Risk management
+- Backtesting framework
+
+## Technology Stack
+
+### Backend
+- Java 17
+- Spring Boot 3.2.0
+- Spring Cloud 2023.0.0
+- Apache Commons Math 3.6.1
+- Project Lombok
+- Maven
+
+### Frontend
+- React 18
+- TypeScript 5
+- Vite
+- Recharts
+- Tailwind CSS
+- Lucide React
+
+### Development Tools
+- IntelliJ IDEA Community Edition (Backend)
+- Visual Studio Code (Frontend)
+- Git
+
+## Project Structure
 ```
 trading-bot/                      # Root project directory
-├── docs/                        # Project-wide documentation
-│   ├── architecture/           # Architecture documentation
-│   │   ├── overview.md        # High-level architecture overview
-│   │   ├── data-flow.md       # Data flow between services
-│   │   ├── services.md        # Service descriptions
-│   │   └── project-structure.md # This file
-│   ├── api/                   # API documentation
-│   │   ├── data-ingestion.md
-│   │   ├── analysis.md
-│   │   └── monitoring.md
-│   └── setup/                 # Setup and deployment guides
+├── docs/                        # Project documentation
+│   ├── architecture/           
+│   ├── api/                   
+│   └── setup/                 
 │
 ├── shared-lib/                  # Shared library module
-│   ├── src/
-│   │   ├── main/
-│   │   │   └── java/
-│   │   │       └── com/
-│   │   │           └── example/
-│   │   │               └── shared/
-│   │   │                   ├── dto/           # Data Transfer Objects
-│   │   │                   ├── model/         # Common domain models
-│   │   │                   └── util/          # Shared utilities
-│   │   └── test/
+│   ├── src/main/java/com/example/shared/
+│   │   ├── dto/               
+│   │   │   ├── TimeSeriesDto.java
+│   │   │   └── FourierAnalysisDto.java
+│   │   ├── model/            
+│   │   └── util/              
 │   └── pom.xml
 │
 ├── analysis-service/            # Technical Analysis Service
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/
-│   │   │   │   └── com/
-│   │   │   │       └── example/
-│   │   │   │           └── analysis/
-│   │   │   │               ├── AnalysisApplication.java
-│   │   │   │               ├── controller/    # REST endpoints
-│   │   │   │               │   └── FourierAnalysisController.java
-│   │   │   │               ├── service/       # Business logic
-│   │   │   │               │   ├── TimeSeriesAnalysis.java
-│   │   │   │               │   └── FourierTransformer.java
-│   │   │   │               └── model/         # Domain models
-│   │   │   └── resources/
-│   │   │       └── application.yml
-│   │   └── test/
+│   ├── src/main/java/com/example/analysis/
+│   │   ├── AnalysisApplication.java
+│   │   ├── controller/    
+│   │   │   └── FourierAnalysisController.java
+│   │   ├── service/       
+│   │   │   ├── TimeSeriesAnalysis.java
+│   │   │   └── FourierTransformer.java
+│   │   └── model/         
+│   ├── src/main/resources/
+│   │   └── application.yml
 │   └── pom.xml
 │
 ├── monitoring-service/          # Visualization Service
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/
-│   │   │   │   └── com/
-│   │   │   │       └── example/
-│   │   │   │           └── monitoring/
-│   │   │   │               ├── MonitoringApplication.java
-│   │   │   │               ├── controller/    # REST endpoints
-│   │   │   │               ├── service/       # Business logic
-│   │   │   │               └── client/        # Feign clients
-│   │   │   └── resources/
-│   │   │       └── application.yml
-│   │   └── test/
+│   ├── src/main/java/com/example/monitoring/
+│   │   ├── MonitoringApplication.java
+│   │   ├── controller/    
+│   │   ├── service/       
+│   │   └── client/        
+│   ├── src/main/resources/
+│   │   └── application.yml
 │   ├── monitoring-frontend/    # React frontend
 │   │   ├── src/
 │   │   │   ├── components/
-│   │   │   │   └── FourierTransformPlot.jsx
-│   │   │   ├── App.jsx
-│   │   │   └── main.jsx
+│   │   │   │   ├── ui/
+│   │   │   │   │   ├── button.tsx
+│   │   │   │   │   └── card.tsx
+│   │   │   │   └── FourierAnalysisDashboard.tsx
+│   │   │   ├── App.tsx
+│   │   │   └── main.tsx
 │   │   ├── package.json
-│   │   └── vite.config.js
+│   │   └── vite.config.ts
 │   └── pom.xml
 │
-├── strategy-service/           # Trading Strategy Service
-│   ├── src/
-│   │   └── main/
-│   │       ├── java/
-│   │       │   └── com/
-│   │       │       └── example/
-│   │       │           └── strategy/
-│   │       │               └── StrategyApplication.java
-│   │       └── resources/
-│   │           └── application.yml
-│   └── pom.xml
-│
-├── execution-service/          # Order Execution Service
-│   ├── src/
-│   │   └── main/
-│   │       ├── java/
-│   │       │   └── com/
-│   │       │       └── example/
-│   │       │           └── execution/
-│   │       │               └── ExecutionApplication.java
-│   │       └── resources/
-│   │           └── application.yml
-│   └── pom.xml
-│
-├── risk-service/              # Risk Management Service
-│   ├── src/
-│   │   └── main/
-│   │       ├── java/
-│   │       │   └── com/
-│   │       │       └── example/
-│   │       │           └── risk/
-│   │       │               └── RiskApplication.java
-│   │       └── resources/
-│   │           └── application.yml
-│   └── pom.xml
-│
-├── data-ingestion-service/    # Market Data Ingestion Service
-│   ├── src/
-│   │   └── main/
-│   │       ├── java/
-│   │       │   └── com/
-│   │       │       └── example/
-│   │       │           └── dataingestion/
-│   │       │               └── DataIngestionApplication.java
-│   │       └── resources/
-│   │           └── application.yml
-│   └── pom.xml
-│
-├── backtesting-service/       # Backtesting Service
-│   ├── src/
-│   │   └── main/
-│   │       ├── java/
-│   │       │   └── com/
-│   │       │       └── example/
-│   │       │           └── backtesting/
-│   │       │               └── BacktestingApplication.java
-│   │       └── resources/
-│   │           └── application.yml
-│   └── pom.xml
-│
-├── .gitignore
 └── pom.xml                    # Parent POM
 ```
 
-## Key Configuration Files
+## Key Configurations
 
-### Parent pom.xml
-- Defines common dependencies
-- Manages versions
-- Configures shared plugins
-- Lists all modules
+### Parent pom.xml Dependencies
+```xml
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+        <version>3.2.0</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        <version>2023.0.0</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-math3</artifactId>
+        <version>3.6.1</version>
+    </dependency>
+    <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>1.18.30</version>
+    </dependency>
+</dependencies>
+```
 
 ### Application Configuration (application.yml)
-Each service should have:
 ```yaml
-server:
-  port: [unique-port]
-
+# Analysis Service (port: 8082)
 spring:
   application:
-    name: [service-name]
+    name: analysis-service
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
+    discovery:
+      enabled: true
+
+server:
+  port: 8082
+  servlet:
+    context-path: /api/v1
 
 eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+```
+
+```yaml
+# Monitoring Service (port: 8083)
+spring:
+  application:
+    name: monitoring-service
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
+    discovery:
+      enabled: true
+
+server:
+  port: 8083
+  servlet:
+    context-path: /api/v1
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
 ```
 
 ## Service Ports
 - Eureka Server: 8761
 - Analysis Service: 8082
 - Monitoring Service: 8083
-- Frontend: 3000
-- Other services: Assign unique ports as needed
+- Frontend: 3000 or 5173 (Vite default)
 
-## Package Structure
-Each service follows:
-```
-com.example.[service-name]/
-├── controller/     # REST endpoints
-├── service/        # Business logic
-├── model/          # Domain models
-├── config/         # Configuration classes
-└── client/         # Service clients (if needed)
-```
+## Development Setup
 
-## Shared Library Structure
-```
-com.example.shared/
-├── dto/            # Data Transfer Objects
-├── model/          # Common domain models
-└── util/           # Shared utilities
-```
+### Backend Setup (IntelliJ IDEA)
+1. Install JDK 17
+2. Clone repository
+3. Open project as Maven project
+4. Enable auto-import for Maven
+5. Run applications in order:
+   - Eureka Server
+   - Analysis Service
+   - Monitoring Service
 
-## Running the Services
-
-### IntelliJ IDEA Community Edition
-1. Create "Application" run configurations for each service
-2. Set main class to [ServiceName]Application
-3. Run in order: Analysis -> Monitoring
-4. Use VSCode for frontend development
-
-### Frontend Development (VSCode)
+### Frontend Setup (VSCode)
+1. Install Node.js (LTS version)
+2. Navigate to frontend directory:
 ```bash
 cd monitoring-service/monitoring-frontend
+```
+3. Install dependencies:
+```bash
 npm install
+```
+4. Start development server:
+```bash
 npm run dev
 ```
 
-## Best Practices
-1. Keep service-specific code in respective services
-2. Use shared-lib for common code
-3. Maintain consistent package structure
-4. Document APIs and configurations
-5. Follow microservice principles
-    - Single responsibility
-    - Independent deployability
-    - Loose coupling
+## API Endpoints
 
-## Current Focus
-- Fourier Transform implementation
-- Service communication
-- Frontend visualization
-- Data flow between services
+### Analysis Service
+- `GET /api/v1/analysis/timeseries` - Get time series data
+- `GET /api/v1/analysis/fourier` - Get Fourier transform analysis
+- `GET /api/v1/analysis/sample` - Generate sample data
+
+### Monitoring Service
+- `GET /api/monitoring/timeseries` - Get formatted time series data
+- `GET /api/monitoring/frequency` - Get frequency domain data
+
+## Current Implementation Details
+
+### TimeSeriesAnalysis Class
+- Implements time series data storage
+- Calculates moving averages (SMA, EMA)
+- Integrates with FourierTransformer
+- Provides data access methods
+
+### FourierTransformer Class
+- Implements FFT algorithm
+- Provides frequency analysis
+- Calculates magnitude spectrum
+- Supports filtering operations
+
+### Frontend Dashboard
+- Real-time data visualization
+- Interactive charts
+- Time series and frequency domain views
+- Auto-refresh functionality
+
+## Best Practices
+1. Service Independence: Each service should be self-contained
+2. Shared Code: Use shared-lib for common functionality
+3. API Documentation: Maintain updated API documentation
+4. Testing: Include unit and integration tests
+5. Error Handling: Implement proper error handling and logging
+
+## Current Focus Areas
+1. Completing service communication
+2. Enhancing frontend visualization
+3. Implementing real-time updates
+4. Adding data filtering capabilities
+5. Improving error handling
+
+## Known Issues
+1. Load balancer warnings in Spring Cloud
+2. Frontend component library integration
+3. Real-time data synchronization
+4. Cross-origin resource sharing (CORS)
+
+## Next Steps
+1. Complete service communication
+2. Implement DTOs in shared library
+3. Enhance frontend visualization
+4. Add real-time data updates
+5. Implement error handling
+6. Add monitoring dashboard
+
+This documentation provides a comprehensive overview of the Trading Bot project's current state, structure, and implementation details. It serves as a starting point for understanding and working with any part of the system.
