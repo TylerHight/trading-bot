@@ -1,7 +1,7 @@
 # Trading Bot Project Documentation
 
 ## Overview
-A microservices-based trading bot focusing on technical analysis using Fourier transforms. The system processes market data, performs advanced technical analysis, and provides real-time visualization through a React frontend.
+A microservices-based trading bot focusing on technical analysis using Fourier transforms. The system processes market data, performs advanced technical analysis, and provides real-time visualization through a React frontend with a system-aware dark mode dashboard.
 
 ## Current Implementation Status
 
@@ -11,18 +11,27 @@ A microservices-based trading bot focusing on technical analysis using Fourier t
 - TimeSeriesAnalysis implementation
 - FourierTransformer service
 - Core service communication framework
+- Frontend with system-aware dark mode
+- Basic chart components
 
 ### In Progress
-- Service-to-service communication
-- Frontend visualization
-- Real-time data updates
-- Fourier transform visualization
+- Frontend layout structure and components
+- Theme system implementation
+- Real-time data visualization
+- Error handling and loading states
 
-### Pending
+### Next Phase
+- Interactive chart features
+- WebSocket integration for real-time updates
+- User preferences management
+- Advanced technical indicators
+
+### Future Plans
 - Strategy implementation
 - Order execution
 - Risk management
 - Backtesting framework
+- Performance optimization
 
 ## Technology Stack
 
@@ -31,249 +40,129 @@ A microservices-based trading bot focusing on technical analysis using Fourier t
 - Spring Boot 3.2.0
 - Spring Cloud 2023.0.0
 - Apache Commons Math 3.6.1
+- WebSocket for real-time data
 - Project Lombok
 - Maven
 
 ### Frontend
-- React 18
-- TypeScript 5
-- Vite
-- Recharts
-- Tailwind CSS
-- Lucide React
-
-### Development Tools
-- IntelliJ IDEA Community Edition (Backend)
-- Visual Studio Code (Frontend)
-- Git
+- React 18.2.0
+- TypeScript 5.3.3
+- Vite 5.0.10
+- Recharts 2.10.3
+- Tailwind CSS 3.3.6
+- Lucide React 0.263.1
+- Shadcn/ui Components
+- ESLint 8.56.0
+- Node.js LTS
 
 ## Project Structure
 ```
-trading-bot/                      # Root project directory
-├── docs/                        # Project documentation
-│   ├── architecture/           
-│   ├── api/                   
-│   └── setup/                 
-│
-├── shared-lib/                  # Shared library module
-│   ├── src/main/java/com/example/shared/
-│   │   ├── dto/               
-│   │   │   ├── TimeSeriesDto.java
-│   │   │   └── FourierAnalysisDto.java
-│   │   ├── model/            
-│   │   └── util/              
-│   └── pom.xml
-│
-├── analysis-service/            # Technical Analysis Service
-│   ├── src/main/java/com/example/analysis/
-│   │   ├── AnalysisApplication.java
-│   │   ├── controller/    
-│   │   │   └── FourierAnalysisController.java
-│   │   ├── service/       
-│   │   │   ├── TimeSeriesAnalysis.java
-│   │   │   └── FourierTransformer.java
-│   │   └── model/         
-│   ├── src/main/resources/
-│   │   └── application.yml
-│   └── pom.xml
-│
-├── monitoring-service/          # Visualization Service
-│   ├── src/main/java/com/example/monitoring/
-│   │   ├── MonitoringApplication.java
-│   │   ├── controller/    
-│   │   ├── service/       
-│   │   └── client/        
-│   ├── src/main/resources/
-│   │   └── application.yml
-│   ├── monitoring-frontend/    # React frontend
-│   │   ├── src/
-│   │   │   ├── components/
-│   │   │   │   ├── ui/
-│   │   │   │   │   ├── button.tsx
-│   │   │   │   │   └── card.tsx
-│   │   │   │   └── FourierAnalysisDashboard.tsx
-│   │   │   ├── App.tsx
-│   │   │   └── main.tsx
-│   │   ├── package.json
-│   │   └── vite.config.ts
-│   └── pom.xml
-│
-└── pom.xml                    # Parent POM
+monitoring-frontend/    # React frontend
+├── src/
+│   ├── components/
+│   │   ├── layout/           # New: Layout components
+│   │   │   ├── Header.tsx
+│   │   │   ├── Sidebar.tsx
+│   │   │   └── Footer.tsx
+│   │   ├── charts/           # New: Chart components
+│   │   │   ├── TimeSeriesChart.tsx
+│   │   │   └── FourierChart.tsx
+│   │   ├── ui/              # Shadcn components
+│   │   │   ├── button.tsx
+│   │   │   └── card.tsx
+│   │   └── theme/           # New: Theme components
+│   │       └── ThemeToggle.tsx
+│   ├── hooks/               # New: Custom hooks
+│   │   ├── useTheme.ts
+│   │   └── useWebSocket.ts
+│   ├── types/               # New: TypeScript types
+│   │   └── index.ts
+│   ├── utils/              # Utility functions
+│   │   ├── theme-utils.ts
+│   │   └── data-utils.ts
+│   ├── App.tsx
+│   ├── main.tsx
+│   └── index.css
 ```
 
-## Key Configurations
+## Immediate Development Priorities
 
-### Parent pom.xml Dependencies
-```xml
-<dependencies>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-web</artifactId>
-        <version>3.2.0</version>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-        <version>2023.0.0</version>
-    </dependency>
-    <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-math3</artifactId>
-        <version>3.6.1</version>
-    </dependency>
-    <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-        <version>1.18.30</version>
-    </dependency>
-</dependencies>
-```
+### 1. Layout Structure
+- Implement responsive layout with header, sidebar, and main content area
+- Add navigation components
+- Create consistent spacing and grid system
 
-### Application Configuration (application.yml)
-```yaml
-# Analysis Service (port: 8082)
-spring:
-  application:
-    name: analysis-service
-  cloud:
-    loadbalancer:
-      ribbon:
-        enabled: false
-    discovery:
-      enabled: true
+### 2. Theme System
+- Complete system-aware dark mode implementation
+- Add theme toggle component
+- Implement theme persistence
+- Ensure consistent styling across all components
 
-server:
-  port: 8082
-  servlet:
-    context-path: /api/v1
+### 3. Data Visualization
+- Create reusable chart components
+- Implement real-time data updates
+- Add interactive features (zoom, pan, time range selection)
+- Improve chart tooltips and legends
 
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
-    fetch-registry: true
-    register-with-eureka: true
-  instance:
-    prefer-ip-address: true
-```
+### 4. Error Handling & Loading States
+- Add global error boundary
+- Implement loading skeletons
+- Add error states for charts
+- Improve error messages and recovery
 
-```yaml
-# Monitoring Service (port: 8083)
-spring:
-  application:
-    name: monitoring-service
-  cloud:
-    loadbalancer:
-      ribbon:
-        enabled: false
-    discovery:
-      enabled: true
+## Component Implementation Plan
 
-server:
-  port: 8083
-  servlet:
-    context-path: /api/v1
+### Layout Components
+- Header with theme toggle and navigation
+- Collapsible sidebar with analysis options
+- Responsive main content area
+- Footer with status information
 
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
-    fetch-registry: true
-    register-with-eureka: true
-  instance:
-    prefer-ip-address: true
-```
+### Chart Components
+- Base chart wrapper with error handling
+- Time series chart with real-time updates
+- Fourier analysis visualization
+- Technical indicator overlays
 
-## Service Ports
-- Eureka Server: 8761
-- Analysis Service: 8082
-- Monitoring Service: 8083
-- Frontend: 3000 or 5173 (Vite default)
+### Theme Components
+- Theme provider with system preference detection
+- Theme toggle with animations
+- Theme persistence service
+- Dark mode optimized components
 
-## Development Setup
+## Testing Strategy
+- Unit tests for utility functions
+- Component testing with React Testing Library
+- Integration tests for data flow
+- End-to-end tests for critical paths
 
-### Backend Setup (IntelliJ IDEA)
-1. Install JDK 17
-2. Clone repository
-3. Open project as Maven project
-4. Enable auto-import for Maven
-5. Run applications in order:
-   - Eureka Server
-   - Analysis Service
-   - Monitoring Service
+## Performance Considerations
+- Implement React.memo for heavy components
+- Optimize chart rerendering
+- Use web workers for calculations
+- Implement proper data pagination
 
-### Frontend Setup (VSCode)
-1. Install Node.js (LTS version)
-2. Navigate to frontend directory:
-```bash
-cd monitoring-service/monitoring-frontend
-```
-3. Install dependencies:
-```bash
-npm install
-```
-4. Start development server:
-```bash
-npm run dev
-```
+## Known Issues and Solutions
+1. Frontend Development Server CORS issues
+   - Configure Vite proxy settings
+   - Update Spring Boot CORS configuration
+2. Chart Rendering
+   - Optimize for performance
+   - Implement proper resize handling
+3. Type Definitions
+   - Create comprehensive type system
+   - Add proper error types
 
-## API Endpoints
+## Next Development Steps
+1. Implement layout structure
+2. Add theme toggle component
+3. Create base chart components
+4. Set up WebSocket connection
+5. Add error boundaries
+6. Implement loading states
+7. Create chart interactions
+8. Add data controls
+9. Implement settings persistence
+10. Add technical indicators
 
-### Analysis Service
-- `GET /api/v1/analysis/timeseries` - Get time series data
-- `GET /api/v1/analysis/fourier` - Get Fourier transform analysis
-- `GET /api/v1/analysis/sample` - Generate sample data
-
-### Monitoring Service
-- `GET /api/monitoring/timeseries` - Get formatted time series data
-- `GET /api/monitoring/frequency` - Get frequency domain data
-
-## Current Implementation Details
-
-### TimeSeriesAnalysis Class
-- Implements time series data storage
-- Calculates moving averages (SMA, EMA)
-- Integrates with FourierTransformer
-- Provides data access methods
-
-### FourierTransformer Class
-- Implements FFT algorithm
-- Provides frequency analysis
-- Calculates magnitude spectrum
-- Supports filtering operations
-
-### Frontend Dashboard
-- Real-time data visualization
-- Interactive charts
-- Time series and frequency domain views
-- Auto-refresh functionality
-
-## Best Practices
-1. Service Independence: Each service should be self-contained
-2. Shared Code: Use shared-lib for common functionality
-3. API Documentation: Maintain updated API documentation
-4. Testing: Include unit and integration tests
-5. Error Handling: Implement proper error handling and logging
-
-## Current Focus Areas
-1. Completing service communication
-2. Enhancing frontend visualization
-3. Implementing real-time updates
-4. Adding data filtering capabilities
-5. Improving error handling
-
-## Known Issues
-1. Load balancer warnings in Spring Cloud
-2. Frontend component library integration
-3. Real-time data synchronization
-4. Cross-origin resource sharing (CORS)
-
-## Next Steps
-1. Complete service communication
-2. Implement DTOs in shared library
-3. Enhance frontend visualization
-4. Add real-time data updates
-5. Implement error handling
-6. Add monitoring dashboard
-
-This documentation provides a comprehensive overview of the Trading Bot project's current state, structure, and implementation details. It serves as a starting point for understanding and working with any part of the system.
+Would you like me to provide detailed implementations for any of these components or focus on a specific area first?

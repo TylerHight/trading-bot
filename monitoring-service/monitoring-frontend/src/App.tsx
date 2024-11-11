@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React from 'react'
 import FourierAnalysisDashboard from './components/FourierAnalysisDashboard'
 
 function App(): React.JSX.Element {
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-background text-foreground">
       <FourierAnalysisDashboard />
     </div>
   )
