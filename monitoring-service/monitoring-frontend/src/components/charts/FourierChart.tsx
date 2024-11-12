@@ -12,12 +12,12 @@ import {
 } from 'recharts';
 import { cn } from '@/lib/utils';
 
-interface TimeSeriesChartProps {
+interface FourierChartProps {
   data: any[];
   className?: string;
 }
 
-export function TimeSeriesChart({ data, className }: TimeSeriesChartProps) {
+export function FourierChart({ data, className }: FourierChartProps) {
   const { theme } = useTheme();
   
   const themeColors = {
@@ -47,11 +47,11 @@ export function TimeSeriesChart({ data, className }: TimeSeriesChartProps) {
             opacity={0.5}
           />
           <XAxis
-            dataKey="name"
+            dataKey="frequency"
             stroke={themeColors.text}
             tick={{ fill: themeColors.text }}
             label={{ 
-              value: "Time", 
+              value: "Frequency", 
               position: "bottom",
               fill: themeColors.text,
               offset: -5
@@ -61,7 +61,7 @@ export function TimeSeriesChart({ data, className }: TimeSeriesChartProps) {
             stroke={themeColors.text}
             tick={{ fill: themeColors.text }}
             label={{ 
-              value: "Value", 
+              value: "Amplitude", 
               angle: -90, 
               position: "insideLeft",
               fill: themeColors.text,
@@ -88,9 +88,9 @@ export function TimeSeriesChart({ data, className }: TimeSeriesChartProps) {
             )}
           />
           <Line
-            name="Price"
+            name="Amplitude"
             type="monotone"
-            dataKey="value"
+            dataKey="amplitude"
             stroke="rgb(37, 99, 235)"
             strokeWidth={2}
             dot={false}

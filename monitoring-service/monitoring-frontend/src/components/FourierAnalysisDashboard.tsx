@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Button } from "./ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
 import { RefreshCw, Download } from 'lucide-react';
+import { useTheme } from '@/components/theme/theme-provider';
 
 interface TimeSeriesPoint {
   timestamp: string;
@@ -47,10 +48,29 @@ const generateSampleData = () => {
 };
 
 const FourierAnalysisDashboard = () => {
+  const { theme } = useTheme();
   const [timeSeriesData, setTimeSeriesData] = useState<TimeSeriesPoint[]>([]);
   const [frequencyData, setFrequencyData] = useState<FrequencyPoint[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Get the actual theme considering system preference
+  const getEffectiveTheme = () => {
+    if (theme === 'system') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    return theme;
+  };
+
+  // Theme-aware colors
+  const themeColors = {
+    text: getEffectiveTheme() === 'dark' ? 'rgba(255, 255, 255, 0.87)' : 'rgba(0, 0, 0, 0.87)',
+    grid: getEffectiveTheme() === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+    tooltip: {
+      background: getEffectiveTheme() === 'dark' ? '#1a1a1a' : '#ffffff',
+      border: getEffectiveTheme() === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+    }
+  };
 
   const refreshData = () => {
     setLoading(true);
@@ -73,6 +93,21 @@ const FourierAnalysisDashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Listen for system theme changes
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handler = () => {
+      // Force a re-render when system theme changes
+      forceUpdate();
+    };
+    
+    mediaQuery.addListener(handler);
+    return () => mediaQuery.removeListener(handler);
+  }, []);
+
+  // Force update helper
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
+
   const downloadData = () => {
     const data = {
       timeSeries: timeSeriesData,
@@ -90,14 +125,14 @@ const FourierAnalysisDashboard = () => {
   };
 
   const chartCommonProps = {
-    margin: { top: 20, right: 30, left: 50, bottom: 65 }, // Increased margins
-    className: "mt-4" // Added top margin
+    margin: { top: 20, right: 30, left: 50, bottom: 65 },
+    className: "mt-4"
   };
 
   const axisCommonProps = {
     tick: { 
-      fill: 'rgba(255,255,255,0.87)',
-      fontSize: 12 // Slightly smaller font
+      fill: themeColors.text,
+      fontSize: 12
     },
     tickMargin: 10
   };
@@ -145,10 +180,10 @@ const FourierAnalysisDashboard = () => {
                     data={timeSeriesData}
                     {...chartCommonProps}
                   >
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke={themeColors.grid} />
                     <XAxis 
                       dataKey="timestamp" 
-                      height={60} // Increased height
+                      height={60}
                       angle={-45}
                       textAnchor="end"
                       {...axisCommonProps}
@@ -156,7 +191,7 @@ const FourierAnalysisDashboard = () => {
                         value: 'Time', 
                         position: 'insideBottom', 
                         offset: -10,
-                        fill: 'rgba(255,255,255,0.87)' 
+                        fill: themeColors.text
                       }}
                     />
                     <YAxis 
@@ -166,21 +201,23 @@ const FourierAnalysisDashboard = () => {
                         angle: -90, 
                         position: 'insideLeft',
                         offset: -5,
-                        fill: 'rgba(255,255,255,0.87)' 
+                        fill: themeColors.text
                       }}
                     />
                     <Tooltip 
                       contentStyle={{ 
-                        backgroundColor: '#1a1a1a',
-                        border: '1px solid rgba(255,255,255,0.1)',
+                        backgroundColor: themeColors.tooltip.background,
+                        border: `1px solid ${themeColors.tooltip.border}`,
+                        color: themeColors.text
                       }}
-                      labelStyle={{ color: 'rgba(255,255,255,0.87)' }}
+                      labelStyle={{ color: themeColors.text }}
+                      itemStyle={{ color: themeColors.text }}
                     />
                     <Legend 
                       verticalAlign="top"
                       height={36}
                       wrapperStyle={{ 
-                        color: 'rgba(255,255,255,0.87)',
+                        color: themeColors.text,
                         paddingTop: '10px'
                       }}
                     />
@@ -208,16 +245,16 @@ const FourierAnalysisDashboard = () => {
                     data={frequencyData}
                     {...chartCommonProps}
                   >
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke={themeColors.grid} />
                     <XAxis 
                       dataKey="frequency" 
-                      height={60} // Increased height
+                      height={60}
                       {...axisCommonProps}
                       label={{ 
                         value: 'Frequency (Hz)', 
                         position: 'insideBottom',
                         offset: -10,
-                        fill: 'rgba(255,255,255,0.87)' 
+                        fill: themeColors.text
                       }}
                     />
                     <YAxis 
@@ -227,21 +264,23 @@ const FourierAnalysisDashboard = () => {
                         angle: -90, 
                         position: 'insideLeft',
                         offset: -5,
-                        fill: 'rgba(255,255,255,0.87)' 
+                        fill: themeColors.text
                       }}
                     />
                     <Tooltip 
                       contentStyle={{ 
-                        backgroundColor: '#1a1a1a',
-                        border: '1px solid rgba(255,255,255,0.1)',
+                        backgroundColor: themeColors.tooltip.background,
+                        border: `1px solid ${themeColors.tooltip.border}`,
+                        color: themeColors.text
                       }}
-                      labelStyle={{ color: 'rgba(255,255,255,0.87)' }}
+                      labelStyle={{ color: themeColors.text }}
+                      itemStyle={{ color: themeColors.text }}
                     />
                     <Legend 
                       verticalAlign="top"
                       height={36}
                       wrapperStyle={{ 
-                        color: 'rgba(255,255,255,0.87)',
+                        color: themeColors.text,
                         paddingTop: '10px'
                       }}
                     />
