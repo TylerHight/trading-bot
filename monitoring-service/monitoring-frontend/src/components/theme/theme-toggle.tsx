@@ -27,7 +27,7 @@ export function ThemeToggle() {
       className="relative h-9 w-9"
     >
       {/* Sun icon for light mode */}
-      <Moon 
+      <Sun 
         className="h-[1.2rem] w-[1.2rem] transition-all absolute transform rotate-0 scale-100" 
         style={{ 
           opacity: theme === 'light' ? 1 : 0,
@@ -36,7 +36,7 @@ export function ThemeToggle() {
       />
       
       {/* Moon icon for dark mode */}
-      <Laptop 
+      <Moon 
         className="h-[1.2rem] w-[1.2rem] transition-all absolute transform rotate-0 scale-100" 
         style={{ 
           opacity: theme === 'dark' ? 1 : 0,
@@ -45,7 +45,7 @@ export function ThemeToggle() {
       />
       
       {/* Laptop icon for system mode */}
-      <Sun 
+      <Laptop 
         className="h-[1.2rem] w-[1.2rem] transition-all absolute transform rotate-0 scale-100" 
         style={{ 
           opacity: theme === 'system' ? 1 : 0,
