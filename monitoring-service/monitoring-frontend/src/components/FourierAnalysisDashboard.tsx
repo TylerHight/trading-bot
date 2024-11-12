@@ -125,7 +125,7 @@ const FourierAnalysisDashboard = () => {
   };
 
   const chartCommonProps = {
-    margin: { top: 20, right: 30, left: 50, bottom: 65 },
+    margin: { top: 20, right: 30, left: 50, bottom: 85 }, // Increased bottom margin
     className: "mt-4"
   };
 
@@ -178,7 +178,8 @@ const FourierAnalysisDashboard = () => {
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart
                     data={timeSeriesData}
-                    {...chartCommonProps}
+                    margin={{ top: 20, right: 30, left: 50, bottom: 85 }}
+                    className="mt-4"
                   >
                     <CartesianGrid strokeDasharray="3 3" stroke={themeColors.grid} />
                     <XAxis 
@@ -190,8 +191,9 @@ const FourierAnalysisDashboard = () => {
                       label={{ 
                         value: 'Time', 
                         position: 'insideBottom', 
-                        offset: -10,
-                        fill: themeColors.text
+                        offset: -25,
+                        fill: themeColors.text,
+                        dy: 10
                       }}
                     />
                     <YAxis 
@@ -200,7 +202,7 @@ const FourierAnalysisDashboard = () => {
                         value: 'Value', 
                         angle: -90, 
                         position: 'insideLeft',
-                        offset: -5,
+                        offset: 0,
                         fill: themeColors.text
                       }}
                     />
@@ -243,7 +245,8 @@ const FourierAnalysisDashboard = () => {
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart
                     data={frequencyData}
-                    {...chartCommonProps}
+                    margin={{ top: 20, right: 30, left: 50, bottom: 65 }}
+                    className="mt-4"
                   >
                     <CartesianGrid strokeDasharray="3 3" stroke={themeColors.grid} />
                     <XAxis 
@@ -253,7 +256,7 @@ const FourierAnalysisDashboard = () => {
                       label={{ 
                         value: 'Frequency (Hz)', 
                         position: 'insideBottom',
-                        offset: -10,
+                        offset: -5,
                         fill: themeColors.text
                       }}
                     />
@@ -263,7 +266,7 @@ const FourierAnalysisDashboard = () => {
                         value: 'Magnitude', 
                         angle: -90, 
                         position: 'insideLeft',
-                        offset: -5,
+                        offset: 0,
                         fill: themeColors.text
                       }}
                     />
