@@ -1,4 +1,4 @@
-import { Moon, Sun } from "lucide-react"
+import { Moon, Sun, Laptop } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useTheme } from "./theme-provider"
 
@@ -6,9 +6,17 @@ export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
 
   const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light"
-    console.log("Toggling theme from", theme, "to", newTheme) // Debug log
-    setTheme(newTheme)
+    switch (theme) {
+      case "light":
+        setTheme("dark")
+        break
+      case "dark":
+        setTheme("system")
+        break
+      default:
+        setTheme("light")
+        break
+    }
   }
 
   return (
@@ -18,9 +26,37 @@ export function ThemeToggle() {
       onClick={toggleTheme}
       className="relative h-9 w-9"
     >
-      <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-      <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-      <span className="sr-only">Toggle theme</span>
+      {/* Sun icon for light mode */}
+      <Moon 
+        className="h-[1.2rem] w-[1.2rem] transition-all absolute transform rotate-0 scale-100" 
+        style={{ 
+          opacity: theme === 'light' ? 1 : 0,
+          transform: theme === 'light' ? 'rotate(0) scale(1)' : 'rotate(90deg) scale(0)'
+        }} 
+      />
+      
+      {/* Moon icon for dark mode */}
+      <Laptop 
+        className="h-[1.2rem] w-[1.2rem] transition-all absolute transform rotate-0 scale-100" 
+        style={{ 
+          opacity: theme === 'dark' ? 1 : 0,
+          transform: theme === 'dark' ? 'rotate(0) scale(1)' : 'rotate(-90deg) scale(0)'
+        }} 
+      />
+      
+      {/* Laptop icon for system mode */}
+      <Sun 
+        className="h-[1.2rem] w-[1.2rem] transition-all absolute transform rotate-0 scale-100" 
+        style={{ 
+          opacity: theme === 'system' ? 1 : 0,
+          transform: theme === 'system' ? 'rotate(0) scale(1)' : 'rotate(90deg) scale(0)'
+        }} 
+      />
+      
+      <span className="sr-only">
+        {theme === 'light' ? 'Switch to dark mode' : 
+         theme === 'dark' ? 'Switch to system mode' : 'Switch to light mode'}
+      </span>
     </Button>
   )
 }
