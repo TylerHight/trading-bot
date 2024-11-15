@@ -1,3 +1,4 @@
+// TimeSeriesChart.tsx
 import React from 'react';
 import { useTheme } from '@/components/theme/theme-provider';
 import {
@@ -11,18 +12,19 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { cn } from '@/lib/utils';
-
-interface TimeSeriesPoint {
-  timestamp: string;
-  value: number;
-}
+import type { TimeSeriesPoint } from '@/hooks/useTimeSeriesWebSocket';
 
 interface TimeSeriesChartProps {
   data: TimeSeriesPoint[];
   className?: string;
+  isLoading?: boolean;
 }
 
-export function TimeSeriesChart({ data, className }: TimeSeriesChartProps) {
+export function TimeSeriesChart({ 
+  data, 
+  className,
+  isLoading = false 
+}: TimeSeriesChartProps) {
   const { theme } = useTheme();
   
   const themeColors = {
@@ -37,6 +39,14 @@ export function TimeSeriesChart({ data, className }: TimeSeriesChartProps) {
   const formatTimestamp = (timestamp: string) => {
     return new Date(timestamp).toLocaleTimeString();
   };
+
+  if (isLoading) {
+    return (
+      <div className={cn("w-full h-[400px] flex items-center justify-center", className)}>
+        <div className="text-muted-foreground">Loading data...</div>
+      </div>
+    );
+  }
 
   return (
     <div className={cn("w-full h-[400px]", className)}>
@@ -106,7 +116,7 @@ export function TimeSeriesChart({ data, className }: TimeSeriesChartProps) {
             strokeWidth={2}
             dot={false}
             activeDot={{ r: 4 }}
-            isAnimationActive={false} // Disable animation for smoother real-time updates
+            isAnimationActive={false}
           />
         </LineChart>
       </ResponsiveContainer>
