@@ -1,4 +1,4 @@
-// useTimeSeriesWebSocket.ts
+// src/hooks/useTimeSeriesWebSocket.ts
 import { useState, useRef, useCallback, useEffect } from 'react';
 
 export interface TimeSeriesPoint {
@@ -19,7 +19,7 @@ interface UseTimeSeriesWebSocketOptions {
 export const useTimeSeriesWebSocket = (options: UseTimeSeriesWebSocketOptions = {}) => {
   const { 
     maxPoints = 100,
-    url = 'ws://localhost:8080/ws/timeseries',
+    url = '/api/v1/data/ws',  // Updated to match backend endpoint
     reconnectAttempts = 5,
     initialBackoff = 1000,
     maxBackoff = 30000
@@ -46,7 +46,7 @@ export const useTimeSeriesWebSocket = (options: UseTimeSeriesWebSocketOptions = 
       ws.current = new WebSocket(url);
 
       ws.current.onopen = () => {
-        console.log('WebSocket connected successfully');
+        console.log('WebSocket connected successfully to data ingestion service');
         setStatus('connected');
         setError(null);
         reconnectCount.current = 0;
@@ -56,29 +56,35 @@ export const useTimeSeriesWebSocket = (options: UseTimeSeriesWebSocketOptions = 
       ws.current.onmessage = (event) => {
         try {
           const newPoint: TimeSeriesPoint = JSON.parse(event.data);
-          setData(currentData => {
-            const updatedData = [...currentData, newPoint];
-            return updatedData.slice(-maxPoints);
-          });
+          // Validate the data structure matches TimeSeriesPoint
+          if ('timestamp' in newPoint && 'value' in newPoint) {
+            setData(currentData => {
+              const updatedData = [...currentData, newPoint];
+              return updatedData.slice(-maxPoints);
+            });
+          } else {
+            console.warn('Received malformed data from WebSocket:', newPoint);
+          }
         } catch (e) {
           console.error('Error parsing WebSocket message:', e);
+          setError('Error processing data from server');
         }
       };
 
       ws.current.onerror = (event) => {
-        console.error('WebSocket error:', event);
+        console.error('WebSocket error with data ingestion service:', event);
         setStatus('error');
-        setError('WebSocket connection error');
+        setError('Connection error with data ingestion service');
       };
 
       ws.current.onclose = (event) => {
-        console.log(`WebSocket connection closed${event.wasClean ? ' cleanly' : ''}`);
+        console.log(`Data ingestion WebSocket connection closed${event.wasClean ? ' cleanly' : ''}`);
         setStatus('disconnected');
 
         // Only attempt reconnection if it wasn't a clean close and we haven't exceeded attempts
         if (!event.wasClean && reconnectCount.current < reconnectAttempts) {
           const timeout = Math.min(backoffTime.current * Math.pow(2, reconnectCount.current), maxBackoff);
-          console.log(`Scheduling reconnection in ${timeout}ms`);
+          console.log(`Scheduling reconnection to data ingestion service in ${timeout}ms`);
 
           reconnectTimeout.current = setTimeout(() => {
             reconnectCount.current += 1;
@@ -86,13 +92,13 @@ export const useTimeSeriesWebSocket = (options: UseTimeSeriesWebSocketOptions = 
             connect();
           }, timeout);
         } else if (reconnectCount.current >= reconnectAttempts) {
-          setError(`Failed to connect after ${reconnectAttempts} attempts`);
+          setError(`Failed to connect to data ingestion service after ${reconnectAttempts} attempts`);
           setStatus('error');
         }
       };
     } catch (err) {
-      console.error('Error establishing WebSocket connection:', err);
-      setError(err instanceof Error ? err.message : 'Failed to connect');
+      console.error('Error establishing connection to data ingestion service:', err);
+      setError(err instanceof Error ? err.message : 'Failed to connect to data service');
       setStatus('error');
     }
   }, [url, maxPoints, reconnectAttempts, initialBackoff, maxBackoff]);

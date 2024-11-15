@@ -1,3 +1,4 @@
+// src/components/FourierAnalysisDashboard.tsx
 import React, { useState, useEffect, useReducer } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Button } from "./ui/button"
@@ -6,6 +7,7 @@ import { Download } from 'lucide-react';
 import { useTheme } from '@/components/theme/theme-provider';
 import { useTimeSeriesWebSocket } from '@/hooks/useTimeSeriesWebSocket';
 import { ConnectionStatusBadge } from './status/ConnectionStatusBadge';
+import { fetchFrequencyData } from '@/services/dataService';
 
 interface TimeSeriesPoint {
   timestamp: string;
@@ -19,11 +21,13 @@ interface FrequencyPoint {
 
 const FourierAnalysisDashboard = () => {
   const { theme } = useTheme();
-  const { data: timeSeriesData, status, error: wsError } = useTimeSeriesWebSocket();
+  // Updated to use data ingestion service WebSocket
+  const { data: timeSeriesData, status, error: wsError } = useTimeSeriesWebSocket({
+    url: 'ws://localhost:8082/api/v1/data/ws'
+  });
   const [frequencyData, setFrequencyData] = useState<FrequencyPoint[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  // Get the actual theme considering system preference
   const getEffectiveTheme = () => {
     if (theme === 'system') {
       return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -31,7 +35,6 @@ const FourierAnalysisDashboard = () => {
     return theme;
   };
 
-  // Theme-aware colors
   const themeColors = {
     text: getEffectiveTheme() === 'dark' ? 'rgba(255, 255, 255, 0.87)' : 'rgba(0, 0, 0, 0.87)',
     grid: getEffectiveTheme() === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
@@ -41,7 +44,6 @@ const FourierAnalysisDashboard = () => {
     }
   };
 
-  // Listen for system theme changes
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handler = () => {
@@ -52,22 +54,22 @@ const FourierAnalysisDashboard = () => {
     return () => mediaQuery.removeListener(handler);
   }, []);
 
-  // Update frequency data when time series data changes
+  // Updated to fetch frequency data from data ingestion service
   useEffect(() => {
-    // This should be replaced with actual frequency data from your backend
-    // For now, we'll keep the sample frequency data generation
-    const frequencyData: FrequencyPoint[] = [];
-    for (let freq = 0; freq < 2; freq += 0.05) {
-      frequencyData.push({
-        frequency: freq.toFixed(2),
-        magnitude: 50 * Math.exp(-Math.pow(freq - 0.2, 2) / 0.1) +
-                   30 * Math.exp(-Math.pow(freq - 0.8, 2) / 0.2)
-      });
+    const getFrequencyData = async () => {
+      try {
+        const data = await fetchFrequencyData();
+        setFrequencyData(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch frequency data');
+      }
+    };
+
+    if (timeSeriesData.length > 0) {
+      getFrequencyData();
     }
-    setFrequencyData(frequencyData);
   }, [timeSeriesData]);
 
-  // Force update helper
   const [, forceUpdate] = useReducer(x => x + 1, 0);
 
   const downloadData = () => {
