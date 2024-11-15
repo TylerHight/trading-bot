@@ -1,4 +1,4 @@
-package com.example.marketdata;
+package com.example.dataingestion;
 
 public class ServiceApplication {
 }

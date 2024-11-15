@@ -20,6 +20,7 @@
         <module name="execution-service" />
         <module name="data-ingestion-service" />
         <module name="strategy-service" />
+        <module name="data-ingestion-service (2)" />
         <module name="backtesting-service" />
         <module name="risk-service" />
       </profile>
@@ -42,16 +43,6 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
         </processorPath>
         <module name="data-ingestion-service (1)" />
-      </profile>
-      <profile name="Annotation profile for data-ingestion-service (2)" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
-        </processorPath>
-        <module name="data-ingestion-service (2)" />
       </profile>
       <profile name="Annotation profile for data-ingestion-service (3)" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />

@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: data-ingestion-service
+
+server:
+  port: 8082
+
+# Eureka client configuration
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    preferIpAddress: true
+
+# Actuator endpoints for monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+# Logging configuration
+logging:
+  level:
+    com.example.dataingestion: DEBUG
+    org.springframework: INFO
+
+# Application specific properties
+app:
+  timeseries:
+    defaultPoints: 20
+    updateInterval: 1000  # milliseconds
