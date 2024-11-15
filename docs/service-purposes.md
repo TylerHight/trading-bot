@@ -23,9 +23,13 @@
 ### 7. Backtesting Service
 **Purpose**: Simulates and tests trading strategies using historical data. Enables strategy validation and optimization before live deployment.
 
+### 8. Dashboard Service
+**Purpose**: Provides the user interface for the entire trading platform. Displays real-time market data, trading charts, system metrics, and control interfaces.
+
 ## Service Communication Summary
 - Each service has a specific, focused responsibility
 - Services communicate through both synchronous (REST) and asynchronous (events) methods
 - All services report their health and metrics to the Monitoring service
 - Data flows from Ingestion → Analysis → Strategy → Risk → Execution
 - Monitoring service observes all other services
+- Dashboard service connects to all services for data visualization and control
