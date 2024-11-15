@@ -19,6 +19,7 @@
     <module>risk-service</module>
     <module>monitoring-service</module>
     <module>backtesting-service</module>
+      <module>service-registry</module>
   </modules>
 
   <properties>

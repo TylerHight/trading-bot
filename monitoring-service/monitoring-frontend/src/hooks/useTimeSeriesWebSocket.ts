@@ -22,58 +22,49 @@ export const useTimeSeriesWebSocket = (options: UseTimeSeriesWebSocketOptions = 
   const [status, setStatus] = useState<WebSocketStatus>('connecting');
   const [error, setError] = useState<string | null>(null);
   const ws = useRef<WebSocket | null>(null);
-  const reconnectTimeout = useRef<NodeJS.Timeout>();
 
-  const connect = useCallback(() => {
-    try {
-      ws.current = new WebSocket(url);
+  useEffect(() => {
+    console.log('Attempting to connect to WebSocket:', url);
+    
+    ws.current = new WebSocket(url);
 
-      ws.current.onopen = () => {
-        setStatus('connected');
-        setError(null);
-        if (reconnectTimeout.current) {
-          clearTimeout(reconnectTimeout.current);
-        }
-      };
+    ws.current.onopen = () => {
+      console.log('WebSocket connected');
+      setStatus('connected');
+      setError(null);
+    };
 
-      ws.current.onmessage = (event) => {
+    ws.current.onmessage = (event) => {
+      try {
         const newPoint: TimeSeriesPoint = JSON.parse(event.data);
+        console.log('Received data:', newPoint);
         setData(currentData => {
           const updatedData = [...currentData, newPoint];
           return updatedData.slice(-maxPoints);
         });
-      };
+      } catch (e) {
+        console.error('Error parsing WebSocket message:', e);
+      }
+    };
 
-      ws.current.onerror = () => {
-        setStatus('error');
-        setError('WebSocket connection error');
-      };
-
-      ws.current.onclose = () => {
-        setStatus('disconnected');
-        reconnectTimeout.current = setTimeout(() => {
-          setStatus('connecting');
-          connect();
-        }, 3000);
-      };
-    } catch (error) {
+    ws.current.onerror = (error) => {
+      console.error('WebSocket error:', error);
       setStatus('error');
-      setError('Failed to connect to WebSocket');
-    }
-  }, [url, maxPoints]);
+      setError('WebSocket connection error');
+    };
 
-  useEffect(() => {
-    connect();
+    ws.current.onclose = () => {
+      console.log('WebSocket connection closed');
+      setStatus('disconnected');
+    };
 
     return () => {
       if (ws.current) {
+        console.log('Cleaning up WebSocket connection');
         ws.current.close();
       }
-      if (reconnectTimeout.current) {
-        clearTimeout(reconnectTimeout.current);
-      }
     };
-  }, [connect]);
+  }, [url, maxPoints]);
 
   return {
     data,
@@ -81,5 +72,3 @@ export const useTimeSeriesWebSocket = (options: UseTimeSeriesWebSocketOptions = 
     error
   };
 };
-
-export default useTimeSeriesWebSocket;
