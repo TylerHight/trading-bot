@@ -12,8 +12,13 @@ import {
 } from 'recharts';
 import { cn } from '@/lib/utils';
 
+interface TimeSeriesPoint {
+  timestamp: string;
+  value: number;
+}
+
 interface TimeSeriesChartProps {
-  data: any[];
+  data: TimeSeriesPoint[];
   className?: string;
 }
 
@@ -27,6 +32,10 @@ export function TimeSeriesChart({ data, className }: TimeSeriesChartProps) {
       background: theme === 'dark' ? 'rgb(31, 41, 55)' : 'rgb(255, 255, 255)',
       border: theme === 'dark' ? 'rgb(55, 65, 81)' : 'rgb(229, 231, 235)',
     }
+  };
+
+  const formatTimestamp = (timestamp: string) => {
+    return new Date(timestamp).toLocaleTimeString();
   };
 
   return (
@@ -47,9 +56,10 @@ export function TimeSeriesChart({ data, className }: TimeSeriesChartProps) {
             opacity={0.5}
           />
           <XAxis
-            dataKey="name"
+            dataKey="timestamp"
             stroke={themeColors.text}
             tick={{ fill: themeColors.text }}
+            tickFormatter={formatTimestamp}
             label={{ 
               value: "Time", 
               position: "bottom",
@@ -77,6 +87,7 @@ export function TimeSeriesChart({ data, className }: TimeSeriesChartProps) {
             }}
             labelStyle={{ color: themeColors.text }}
             itemStyle={{ color: themeColors.text }}
+            labelFormatter={formatTimestamp}
             cursor={{ stroke: themeColors.grid }}
           />
           <Legend
@@ -95,6 +106,7 @@ export function TimeSeriesChart({ data, className }: TimeSeriesChartProps) {
             strokeWidth={2}
             dot={false}
             activeDot={{ r: 4 }}
+            isAnimationActive={false} // Disable animation for smoother real-time updates
           />
         </LineChart>
       </ResponsiveContainer>

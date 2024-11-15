@@ -2,8 +2,10 @@ import React, { useState, useEffect, useReducer } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Button } from "./ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
-import { RefreshCw, Download } from 'lucide-react';
+import { Download } from 'lucide-react';
 import { useTheme } from '@/components/theme/theme-provider';
+import { useTimeSeriesWebSocket } from '@/hooks/useTimeSeriesWebSocket';
+import { ConnectionStatusBadge } from './status/ConnectionStatusBadge';
 
 interface TimeSeriesPoint {
   timestamp: string;
@@ -15,43 +17,10 @@ interface FrequencyPoint {
   magnitude: number;
 }
 
-// Sample data generator
-const generateSampleData = () => {
-  const timeSeriesData: TimeSeriesPoint[] = [];
-  const frequencyData: FrequencyPoint[] = [];
-  
-  // Generate time series data
-  for (let i = 0; i < 100; i++) {
-    const time = new Date(2024, 0, 1, 0, i);
-    const value = 
-      50 + // baseline
-      30 * Math.sin(i * 0.1) + // main wave
-      10 * Math.sin(i * 0.5) + // secondary wave
-      5 * (Math.random() - 0.5); // noise
-    
-    timeSeriesData.push({
-      timestamp: time.toLocaleTimeString(),
-      value: value
-    });
-  }
-
-  // Generate frequency domain data
-  for (let freq = 0; freq < 2; freq += 0.05) {
-    frequencyData.push({
-      frequency: freq.toFixed(2),
-      magnitude: 50 * Math.exp(-Math.pow(freq - 0.2, 2) / 0.1) +
-                 30 * Math.exp(-Math.pow(freq - 0.8, 2) / 0.2)
-    });
-  }
-
-  return { timeSeriesData, frequencyData };
-};
-
 const FourierAnalysisDashboard = () => {
   const { theme } = useTheme();
-  const [timeSeriesData, setTimeSeriesData] = useState<TimeSeriesPoint[]>([]);
+  const { data: timeSeriesData, status, error: wsError } = useTimeSeriesWebSocket();
   const [frequencyData, setFrequencyData] = useState<FrequencyPoint[]>([]);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Get the actual theme considering system preference
@@ -72,38 +41,31 @@ const FourierAnalysisDashboard = () => {
     }
   };
 
-  const refreshData = () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const { timeSeriesData, frequencyData } = generateSampleData();
-      setTimeSeriesData(timeSeriesData);
-      setFrequencyData(frequencyData);
-    } catch (err) {
-      setError('Failed to generate data');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    refreshData();
-    // Refresh every 5 seconds
-    const interval = setInterval(refreshData, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
   // Listen for system theme changes
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handler = () => {
-      // Force a re-render when system theme changes
       forceUpdate();
     };
     
     mediaQuery.addListener(handler);
     return () => mediaQuery.removeListener(handler);
   }, []);
+
+  // Update frequency data when time series data changes
+  useEffect(() => {
+    // This should be replaced with actual frequency data from your backend
+    // For now, we'll keep the sample frequency data generation
+    const frequencyData: FrequencyPoint[] = [];
+    for (let freq = 0; freq < 2; freq += 0.05) {
+      frequencyData.push({
+        frequency: freq.toFixed(2),
+        magnitude: 50 * Math.exp(-Math.pow(freq - 0.2, 2) / 0.1) +
+                   30 * Math.exp(-Math.pow(freq - 0.8, 2) / 0.2)
+      });
+    }
+    setFrequencyData(frequencyData);
+  }, [timeSeriesData]);
 
   // Force update helper
   const [, forceUpdate] = useReducer(x => x + 1, 0);
@@ -124,11 +86,6 @@ const FourierAnalysisDashboard = () => {
     URL.revokeObjectURL(url);
   };
 
-  const chartCommonProps = {
-    margin: { top: 20, right: 30, left: 50, bottom: 85 }, // Increased bottom margin
-    className: "mt-4"
-  };
-
   const axisCommonProps = {
     tick: { 
       fill: themeColors.text,
@@ -137,20 +94,17 @@ const FourierAnalysisDashboard = () => {
     tickMargin: 10
   };
 
+  const formatTimestamp = (timestamp: string) => {
+    return new Date(timestamp).toLocaleTimeString();
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground p-4">
       <div className="w-full max-w-7xl mx-auto space-y-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <h1 className="text-2xl font-bold text-foreground">Fourier Analysis Dashboard</h1>
-          <div className="flex flex-wrap gap-2">
-            <Button 
-              onClick={refreshData} 
-              disabled={loading}
-              className="flex items-center gap-2 bg-primary text-primary-foreground"
-            >
-              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-              Refresh
-            </Button>
+          <div className="flex items-center gap-4">
+            <ConnectionStatusBadge status={status} />
             <Button
               onClick={downloadData}
               variant="outline"
@@ -162,9 +116,9 @@ const FourierAnalysisDashboard = () => {
           </div>
         </div>
 
-        {error && (
+        {(error || wsError) && (
           <div className="bg-destructive/20 border border-destructive text-destructive-foreground px-4 py-3 rounded">
-            Error: {error}
+            Error: {error || wsError}
           </div>
         )}
 
@@ -188,6 +142,7 @@ const FourierAnalysisDashboard = () => {
                       angle={-45}
                       textAnchor="end"
                       {...axisCommonProps}
+                      tickFormatter={formatTimestamp}
                       label={{ 
                         value: 'Time', 
                         position: 'insideBottom', 
@@ -214,6 +169,7 @@ const FourierAnalysisDashboard = () => {
                       }}
                       labelStyle={{ color: themeColors.text }}
                       itemStyle={{ color: themeColors.text }}
+                      labelFormatter={formatTimestamp}
                     />
                     <Legend 
                       verticalAlign="top"
@@ -229,6 +185,7 @@ const FourierAnalysisDashboard = () => {
                       stroke="#8884d8" 
                       name="Signal"
                       dot={false}
+                      isAnimationActive={false}
                     />
                   </LineChart>
                 </ResponsiveContainer>

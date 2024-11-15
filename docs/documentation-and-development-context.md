@@ -1,22 +1,22 @@
 # Trading Bot Project: Development Context and Documentation
-[Last Updated: 2024-11-11]
+[Last Updated: 2024-11-14]
 
 ## ASSISTANT CONTEXT SECTION
-This section helps maintain conversation-to-conversation continuity. When sharing this file, add your current focus below:
 
 Current Development Focus:
-- Active Task: [e.g., "Implementing chart theme improvements"]
-- Last Change: [e.g., "Fixed time series axis label spacing"]
-- Next Task: [e.g., "Adding tooltip customization"]
+- Active Task: "Fixing WebSocket connection issues between frontend and backend"
+- Last Change: "Implemented WebSocket communication structure"
+- Next Task: "Implement error handling and reconnection logic"
 
 Recent Code Changes (Last 3 conversations):
-1. [Description and date of most recent change]
-2. [Second most recent]
-3. [Third most recent]
+1. Added WebSocket hook and components (2024-11-14)
+2. Added connection status indicator (2024-11-14)
+3. Migrated from local data generation to WebSocket (2024-11-14)
 
 Known Context Gaps:
-- [List any information that was unclear or missing from previous conversations]
-- [Note any assumptions made]
+- WebSocket connection failing - investigation needed
+- Need to verify backend CORS configuration
+- Need to confirm port numbers and WebSocket endpoints
 
 ## IMPLEMENTATION STATUS
 
@@ -25,10 +25,11 @@ Known Context Gaps:
 - Base chart components
 - Time series visualization
 - Theme-aware tooltips
+- UI components for connection status
 
 ### In Progress 🔄
-- WebSocket real-time updates
-- Interactive chart features
+- WebSocket real-time updates (currently failing)
+- Connection error handling
 - Error boundary implementation
 
 ### Planned Features 📋
@@ -58,6 +59,8 @@ interface ThemeContextType {
 
 type Theme = 'light' | 'dark' | 'system';
 
+type WebSocketStatus = 'connecting' | 'connected' | 'disconnected' | 'error';
+
 // Planned/In Progress
 interface TechnicalIndicators {
   movingAverages: {
@@ -75,81 +78,59 @@ interface TechnicalIndicators {
 }
 ```
 
-### Current Component Implementation
-```typescript
-// Currently using this TimeSeriesChart implementation
-const TimeSeriesChart = ({ data }: { data: TimeSeriesPoint[] }) => {
-  const { theme } = useTheme();
-  
-  const themeColors = {
-    text: theme === 'dark' ? 'rgba(255, 255, 255, 0.87)' : 'rgba(0, 0, 0, 0.87)',
-    grid: theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-    tooltip: {
-      background: theme === 'dark' ? '#1a1a1a' : '#ffffff',
-      border: theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-    }
-  };
+### WebSocket Implementation Files
+```
+Frontend:
+src/
+├── hooks/
+│   └── useTimeSeriesWebSocket.ts    # WebSocket connection management
+├── components/
+│   ├── status/
+│   │   └── ConnectionStatusBadge.tsx # Connection status indicator
+│   └── FourierAnalysisDashboard.tsx  # Main component using WebSocket
 
-  return (
-    <ResponsiveContainer width="100%" height={400}>
-      <LineChart
-        data={data}
-        margin={{ top: 20, right: 30, left: 50, bottom: 85 }}
-      >
-        <CartesianGrid strokeDasharray="3 3" stroke={themeColors.grid} />
-        <XAxis 
-          dataKey="timestamp" 
-          height={60}
-          angle={-45}
-          textAnchor="end"
-          stroke={themeColors.text}
-          tick={{ fill: themeColors.text }}
-          label={{ 
-            value: 'Time', 
-            position: 'insideBottom', 
-            offset: -15,
-            fill: themeColors.text,
-            dy: 10
-          }}
-        />
-        <YAxis 
-          stroke={themeColors.text}
-          tick={{ fill: themeColors.text }}
-          label={{ 
-            value: 'Value', 
-            angle: -90, 
-            position: 'insideLeft',
-            offset: -5,
-            fill: themeColors.text
-          }}
-        />
-        <Tooltip 
-          contentStyle={{ 
-            backgroundColor: themeColors.tooltip.background,
-            border: `1px solid ${themeColors.tooltip.border}`,
-            color: themeColors.text
-          }}
-          labelStyle={{ color: themeColors.text }}
-          itemStyle={{ color: themeColors.text }}
-        />
-        <Legend 
-          verticalAlign="top"
-          height={36}
-          wrapperStyle={{ 
-            color: themeColors.text,
-            paddingTop: '10px'
-          }}
-        />
-        <Line 
-          type="monotone" 
-          dataKey="value" 
-          stroke="#8884d8" 
-          name="Signal"
-          dot={false}
-        />
-      </LineChart>
-    </ResponsiveContainer>
-  );
+Backend:
+src/main/java/com/example/monitoring/
+├── config/
+│   └── WebSocketConfig.java         # WebSocket endpoint configuration
+├── dto/
+│   └── TimeSeriesPoint.java         # Data transfer object
+├── service/
+│   └── TimeSeriesGeneratorService.java # Data generation
+└── visualization/
+    └── TimeSeriesWebSocketHandler.java # WebSocket session handling
+```
+
+### Current WebSocket Issues
+1. Frontend unable to connect to backend WebSocket
+2. Error displayed: "WebSocket connection error"
+3. Possible causes:
+    - CORS configuration
+    - Port mismatch (Frontend: 5173, Backend: 8080)
+    - Endpoint path mismatch
+    - WebSocket handshake failing
+
+### Required Configuration
+```java
+// Backend WebSocket Config
+@Configuration
+@EnableWebSocket
+public class WebSocketConfig implements WebSocketConfigurer {
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry.addHandler(timeSeriesWebSocketHandler, "/ws/timeseries")
+               .setAllowedOrigins("http://localhost:5173");
+    }
+}
+```
+
+```typescript
+// Frontend WebSocket Hook
+const useTimeSeriesWebSocket = (options: UseTimeSeriesWebSocketOptions = {}) => {
+  const { 
+    url = 'ws://localhost:8080/ws/timeseries'
+  } = options;
+  // ... implementation
 };
 ```
 
@@ -161,11 +142,15 @@ monitoring-frontend/
 ├── src/
 │   ├── components/
 │   │   ├── charts/
-│   │   │   ├── TimeSeriesChart.tsx    # ✓ Implemented
-│   │   │   └── FourierChart.tsx       # ✓ Implemented
+│   │   │   ├── TimeSeriesChart.tsx     # ✓ Implemented
+│   │   │   └── FourierChart.tsx        # ✓ Implemented
+│   │   ├── status/
+│   │   │   └── ConnectionStatusBadge.tsx # ✓ Implemented
 │   │   └── theme/
-│   │       ├── theme-provider.tsx     # ✓ Implemented
-│   │       └── theme-toggle.tsx       # ✓ Implemented
+│   │       ├── theme-provider.tsx      # ✓ Implemented
+│   │       └── theme-toggle.tsx        # ✓ Implemented
+│   └── hooks/
+│       └── useTimeSeriesWebSocket.ts   # ✓ Implemented
 ```
 
 ### Current Dependencies
@@ -174,7 +159,10 @@ monitoring-frontend/
   "dependencies": {
     "react": "18.2.0",
     "recharts": "2.10.3",
-    "lucide-react": "0.263.1"
+    "lucide-react": "0.263.1",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.0.0"
   }
 }
 ```
@@ -182,8 +170,9 @@ monitoring-frontend/
 ### Known Issues
 1. ✓ Fixed: Chart text colors in system theme
 2. ✓ Fixed: Time series X-axis label spacing
-3. 🔄 In Progress: WebSocket connection stability
-4. 📋 Planned: Chart performance optimization
+3. 🔄 Active: WebSocket connection failing
+4. 🔄 Active: Connection error handling
+5. 📋 Planned: Chart performance optimization
 
 ### Style Guidelines
 - Using Tailwind CSS for styling
@@ -191,31 +180,25 @@ monitoring-frontend/
 - Theme-aware color system implementation
 
 ## CONVERSATION HISTORY NOTES
-[Add brief notes about major decisions/changes from previous conversations here]
 
 Last Conversation Summary:
-- Date: [Last conversation date]
-- Major Decisions: [List major decisions made]
-- Changes Implemented: [List changes implemented]
-- Questions Resolved: [List questions that were answered]
-
-## INSTRUCTIONS FOR NEXT CONVERSATION
-When starting a new conversation with this project:
-
-1. Copy this entire file
-2. Update the "Current Development Focus" section
-3. Add any new changes to the appropriate sections
-4. Share the updated file
-
-The assistant will:
-1. Maintain context from previous conversations
-2. Reference implemented features correctly
-3. Suggest improvements based on current status
-4. Help maintain code consistency
+- Date: 2024-11-14
+- Major Decisions:
+    - Implemented WebSocket communication structure
+    - Added connection status indicator
+    - Updated data flow from backend to frontend
+- Changes Implemented:
+    - Added WebSocket hook
+    - Added connection status component
+    - Updated chart components for real-time data
+- Questions Resolved:
+    - WebSocket implementation structure
+    - Component organization
+    - Data flow architecture
 
 ## VERSION CONTROL
-Document Version: 1.0
+Document Version: 1.1
 Last Editor: Assistant
-Last Edit Date: 2024-11-11
+Last Edit Date: 2024-11-14
 
 [End of Document]

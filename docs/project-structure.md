@@ -15,35 +15,37 @@ monitoring-frontend/    # React frontend
 │   │   │   └── BaseChart.tsx          # ✓ Implemented
 │   │   ├── ui/              # Shadcn components
 │   │   │   ├── button.tsx   # Updated with icon support
-│   │   │   └── card.tsx
+│   │   │   ├── card.tsx
+│   │   │   ├── badge.tsx    # ✓ Implemented for WebSocket status
+│   │   │   └── alert.tsx    # ✓ Implemented for error handling
 │   │   ├── theme/           # Theme components
 │   │   │   ├── theme-provider.tsx    # ✓ Implemented
 │   │   │   └── theme-toggle.tsx      # ✓ Implemented
 │   │   ├── analysis/        # Analysis components
 │   │   │   ├── TechnicalIndicators.tsx  # 🔄 In Progress
 │   │   │   └── SignalDisplay.tsx        # 📋 Planned
+│   │   ├── status/          # Status components
+│   │   │   └── ConnectionStatusBadge.tsx # ✓ Implemented
 │   │   └── common/          # Shared components
 │   │       ├── LoadingSpinner.tsx
 │   │       └── ErrorBoundary.tsx
 │   ├── hooks/               # Custom hooks
-│   │   ├── useWebSocket.ts          # ✓ Implemented
-│   │   ├── useTheme.ts             # ✓ Implemented
-│   │   └── useAnalysis.ts          # 🔄 In Progress
+│   │   ├── useTimeSeriesWebSocket.ts  # 🔄 In Progress (connection issues)
+│   │   ├── useTheme.ts              # ✓ Implemented
+│   │   └── useAnalysis.ts           # 🔄 In Progress
 │   ├── types/               # TypeScript types
 │   │   ├── index.ts         # Common types
 │   │   ├── market.ts        # Market data types
-│   │   └── analysis.ts      # Analysis types
+│   │   └── websocket.ts     # ✓ Implemented WebSocket types
 │   ├── utils/              # Utility functions
 │   │   ├── theme-utils.ts
 │   │   ├── data-utils.ts
 │   │   └── analysis-utils.ts
 │   ├── services/           # API services
-│   │   ├── websocket.ts
-│   │   ├── market-data.ts
-│   │   └── analysis.ts
+│   │   └── websocket.ts    # 🔄 In Progress (needs configuration)
 │   ├── config/            # Configuration
 │   │   ├── chart-config.ts
-│   │   └── websocket-config.ts
+│   │   └── websocket-config.ts  # 🔄 In Progress (needs update)
 │   ├── App.tsx           
 │   ├── main.tsx
 │   └── index.css         
@@ -53,54 +55,35 @@ monitoring-frontend/    # React frontend
 │   │   ├── components/
 │   │   └── hooks/
 │   └── integration/
-├── .env
+├── .env                   # Needs WebSocket configuration
 ├── .env.development
 ├── .env.production
-├── vite.config.ts
-├── tailwind.config.js
-├── tsconfig.json
-└── package.json
-```
+├── vite.config.ts         # Updated with path aliases
+├── tailwind.config.js     # Updated with shadcn/ui colors
+├── tsconfig.json          # Updated with path configurations
+└── package.json          # Updated with new dependencies
 
 ## Backend Structure
 ```
-trading-bot/
-├── market-service/
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/
-│   │   │   │   └── com/tradingbot/market
-│   │   │   │       ├── controller/
-│   │   │   │       ├── service/
-│   │   │   │       ├── model/
-│   │   │   │       └── config/
-│   │   │   └── resources/
-│   │   └── test/
-│   └── pom.xml
-├── analysis-service/
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/
-│   │   │   │   └── com/tradingbot/analysis
-│   │   │   │       ├── controller/
-│   │   │   │       ├── service/
-│   │   │   │       ├── model/
-│   │   │   │       └── config/
-│   │   │   └── resources/
-│   │   └── test/
-│   └── pom.xml
-├── common/
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/
-│   │   │   │   └── com/tradingbot/common
-│   │   │   │       ├── model/
-│   │   │   │       ├── util/
-│   │   │   │       └── config/
-│   │   │   └── resources/
-│   │   └── test/
-│   └── pom.xml
-└── pom.xml
+monitoring-service/       # Spring Boot backend
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/example/monitoring
+│   │   │       ├── config/
+│   │   │       │   └── WebSocketConfig.java        # 🔄 In Progress (CORS issues)
+│   │   │       ├── controller/
+│   │   │       │   └── WebSocketController.java    # 📋 Planned
+│   │   │       ├── dto/
+│   │   │       │   └── TimeSeriesPoint.java        # ✓ Implemented
+│   │   │       ├── service/
+│   │   │       │   └── TimeSeriesGeneratorService.java # ✓ Implemented
+│   │   │       └── visualization/
+│   │   │           └── TimeSeriesWebSocketHandler.java # 🔄 In Progress
+│   │   └── resources/
+│   │       └── application.properties    # Needs WebSocket configuration
+│   └── test/
+└── pom.xml              # Updated with WebSocket dependencies
 ```
 
 ## Status Legend
@@ -110,23 +93,32 @@ trading-bot/
 ❌ - Deprecated/Removed
 
 ## File Status Overview
-Total Files: 47
-- ✓ Implemented: 18
-- 🔄 In Progress: 12
+Total Files: 52
+- ✓ Implemented: 20
+- 🔄 In Progress: 15
 - 📋 Planned: 15
 - ❌ Deprecated: 2
 
 ## Critical Files
 These files require special attention during development:
-1. TimeSeriesChart.tsx - Core visualization component
-2. theme-provider.tsx - Theme management
-3. useWebSocket.ts - Real-time data handling
-4. analysis-utils.ts - Technical analysis calculations
+1. useTimeSeriesWebSocket.ts - WebSocket connection issues
+2. WebSocketConfig.java - CORS and endpoint configuration
+3. TimeSeriesWebSocketHandler.java - WebSocket session management
+4. ConnectionStatusBadge.tsx - WebSocket status visualization
+5. TimeSeriesChart.tsx - Real-time data visualization
+6. theme-provider.tsx - Theme management
 
 ## Recent Changes
-1. Added BaseChart.tsx component
-2. Updated theme handling in TimeSeriesChart.tsx
-3. Implemented WebSocket hook
-4. Fixed chart label spacing issues
+1. Added WebSocket communication structure
+2. Added connection status components
+3. Updated TimeSeriesChart for real-time data
+4. Added badge and alert components for status handling
+5. Updated project configuration for WebSocket support
+
+## Known Issues
+1. WebSocket connection failing from frontend to backend
+2. CORS configuration needs verification
+3. Port and endpoint configuration needs review
+4. Error handling needs improvement
 
 [End of Project Structure Documentation]
